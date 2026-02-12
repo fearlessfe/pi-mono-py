@@ -8,18 +8,29 @@ from pi_ai.types import (
     AssistantMessage,
     AssistantMessageEvent,
     Context,
+    DoneEvent,
+    ErrorEvent,
     Message,
     Model,
     SimpleStreamOptions,
+    StartEvent,
     StreamOptions,
+    StopReason,
     TextContent,
+    TextDeltaEvent,
+    TextEndEvent,
+    TextStartEvent,
     ThinkingContent,
+    ThinkingEndEvent,
+    ThinkingLevel,
+    ThinkingStartEvent,
     Tool,
     ToolCall,
+    ToolcallDeltaEvent,
+    ToolcallEndEvent,
+    ToolcallStartEvent,
     Usage,
     UsageCost,
-    StopReason,
-    ThinkingLevel,
     CacheRetention,
 )
 from pi_ai.event_stream import AssistantMessageEventStream
@@ -31,6 +42,16 @@ try:
     from anthropic import Anthropic
 except ImportError:
     Anthropic = None
+
+
+def normalize_mistral_tool_id(tool_id: str) -> str:
+    normalized = "".join(c for c in tool_id if c.isalnum())
+    if len(normalized) < 9:
+        padding = "ABCDEFGHI"
+        normalized = normalized + padding[0: 9 - len(normalized)]
+    elif len(normalized) > 9:
+        normalized = normalized[0:9]
+    return normalized
 
 
 CLAUDE_CODE_TOOLS = [
