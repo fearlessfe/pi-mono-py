@@ -11,6 +11,7 @@ StreamFunction = Callable[
 ]
 
 ApiProvider = None
+_registry: dict[str, tuple[Any, str | None]] = {}
 
 
 def register_api_provider(
@@ -20,8 +21,6 @@ def register_api_provider(
     global ApiProvider
 
     ApiProvider = provider
-
-    _registry: dict[str, tuple[Any, str | None]] = {}
     _registry[provider.api] = (provider, source_id)
 
 
