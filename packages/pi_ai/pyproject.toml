@@ -1,0 +1,29 @@
+[project]
+name = "pi-ai"
+version = "0.1.0"
+description = "Unified multi-provider LLM API with streaming, tool calling, and cross-provider handoffs"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+dependencies = [
+    "pydantic>=2.0,<3",
+    "httpx>=0.27,<1",
+]
+
+[project.optional-dependencies]
+openai = ["openai>=1.50,<2"]
+anthropic = ["anthropic>=0.40,<1"]
+google = ["google-genai>=1.0,<2"]
+all = ["pi-ai[openai,anthropic,google]"]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.24",
+    "pytest-mock>=3.14",
+    "ruff>=0.8",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pi_ai"]
