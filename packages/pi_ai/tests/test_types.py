@@ -172,3 +172,92 @@ def test_json_schema_generation():
     text_content_schema = TextContent.model_json_schema()
     assert "type" in text_content_schema["properties"]
     assert "text" in text_content_schema["properties"]
+
+
+def test_content_type_validation():
+    from pi_ai.types import (
+        TextContent,
+        ImageContent,
+        ToolCall,
+        ThinkingContent,
+    )
+    import pydantic
+    import pytest
+
+    text = TextContent(type="text", text="Hello world")
+    assert text.type == "text"
+    assert text.text == "Hello world"
+
+    with pytest.raises(pydantic.ValidationError):
+        TextContent(type="text")
+
+    image = ImageContent(
+        type="image",
+        data="iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
+        mimeType="image/png",
+    )
+    assert image.type == "image"
+    assert image.mime_type == "image/png"
+
+    with pytest.raises(pydantic.ValidationError):
+        ImageContent(type="image")
+
+    thinking = ThinkingContent(
+        type="thinking",
+        thinking="Let me think about this...",
+        thinking_signature="sig123",
+    )
+    assert thinking.type == "thinking"
+    assert thinking.thinking == "Let me think about this..."
+
+    tool_call = ToolCall(
+        type="toolCall",
+        id="call_abc123",
+        name="get_weather",
+        arguments={"location": "Tokyo"},
+        thought_signature=None,
+    )
+    assert tool_call.type == "toolCall"
+    assert tool_call.id == "call_abc123"
+    assert tool_call.name == "get_weather"
+    assert tool_call.arguments == {"location": "Tokyo"}
+
+
+def test_union_type_discrimination():
+    from pi_ai.types import (
+        UserContent,
+        AssistantContent,
+        TextContent,
+        ImageContent,
+        ToolCall,
+        ThinkingContent,
+    )
+
+    text = TextContent(type="text", text="Hello")
+    assert isinstance(text, TextContent)
+
+    image = ImageContent(type="image", data="base64", mimeType="image/png")
+    assert isinstance(image, ImageContent)
+
+    user_contents: list[UserContent] = [text, image]
+    assert len(user_contents) == 2
+
+    tool_call = ToolCall(
+        type="toolCall",
+        id="call_1",
+        name="test",
+        arguments={},
+        thought_signature=None,
+    )
+    thinking = ThinkingContent(type="thinking", thinking="hmm", thinking_signature=None)
+
+    assistant_contents: list[AssistantContent] = [text, thinking, tool_call]
+    assert len(assistant_contents) == 3
+
+    for content in assistant_contents:
+        if content.type == "text":
+            assert hasattr(content, "text")
+        elif content.type == "thinking":
+            assert hasattr(content, "thinking")
+        elif content.type == "toolCall":
+            assert hasattr(content, "name")
