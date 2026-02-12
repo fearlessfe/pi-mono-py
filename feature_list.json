@@ -1,0 +1,386 @@
+{
+  "project": "pi-mono-py",
+  "description": "Python implementation of pi-mono (pi-ai + pi-agent-core)",
+  "last_updated": "2026-02-13",
+  "categories": {
+    "phase0_bugs": "Phase 0: Fix Existing Bugs",
+    "phase1_types": "Phase 1: Complete Type System",
+    "phase2_providers": "Phase 2: Provider Implementations",
+    "phase3_models": "Phase 3: Model Registry",
+    "phase4_agent": "Phase 4: Agent Runtime",
+    "phase5_tools": "Phase 5: Tool System",
+    "phase6_tests": "Phase 6: Test Infrastructure"
+  },
+  "features": [
+    {
+      "id": "P0-001","passes": true,
+      "category": "phase0_bugs",
+      "priority": "P0",
+      "description": "Fix pi-ai/providers/openai.py - add missing event type imports",
+      "steps": [
+        "Open pi-ai/src/pi_ai/providers/openai.py",
+        "Add imports: StartEvent, TextDeltaEvent, ThinkingDeltaEvent, ToolcallEndEvent, ToolcallDeltaEvent, DoneEvent, ErrorEvent",
+        "Run python -c \"from pi_ai.providers.openai import stream\" to verify",
+        "Run ruff check on the file"
+      ],
+      "verification": "python -c \"from pi_ai.providers.openai import stream\" && echo 'OK'",
+      "passes": false
+    },
+    {
+      "id": "P0-002",
+      "category": "phase0_bugs",
+      "priority": "P0",
+      "description": "Fix pi-ai/providers/anthropic.py - add event imports and fix indentation",
+      "steps": [
+        "Open pi-ai/src/pi_ai/providers/anthropic.py",
+        "Add missing event type imports",
+        "Fix except block indentation issues",
+        "Fix normalize_mistral_tool_id reference",
+        "Run python import check"
+      ],
+      "verification": "python -c \"from pi_ai.providers.anthropic import stream\" && echo 'OK'",
+      "passes": false
+    },
+    {
+      "id": "P0-003",
+      "category": "phase0_bugs",
+      "priority": "P0",
+      "description": "Fix pi-ai/providers/google.py - add event type imports",
+      "steps": [
+        "Open pi-ai/src/pi_ai/providers/google.py",
+        "Add missing event type imports",
+        "Fix event emission logic",
+        "Run python import check"
+      ],
+      "verification": "python -c \"from pi_ai.providers.google import stream\" && echo 'OK'",
+      "passes": false
+    },
+    {
+      "id": "P0-004",
+      "category": "phase0_bugs",
+      "priority": "P0",
+      "description": "Fix pi-ai/providers/transform.py - implement is_same_model",
+      "steps": [
+        "Open pi-ai/src/pi_ai/providers/transform.py",
+        "Implement is_same_model function",
+        "Fix type annotations for Model generic",
+        "Run python import check"
+      ],
+      "verification": "python -c \"from pi_ai.providers.transform import transform_messages\" && echo 'OK'",
+      "passes": false
+    },
+    {
+      "id": "P0-005",
+      "category": "phase0_bugs",
+      "priority": "P0",
+      "description": "Fix pi-ai/registry.py - fix _registry variable scope",
+      "steps": [
+        "Open pi-ai/src/pi_ai/registry.py",
+        "Fix _registry variable scope issue",
+        "Ensure register/unregister functions work correctly",
+        "Run python import check"
+      ],
+      "verification": "python -c \"from pi_ai.registry import register_api, get_api\" && echo 'OK'",
+      "passes": false
+    },
+    {
+      "id": "P0-006",
+      "category": "phase0_bugs",
+      "priority": "P0",
+      "description": "All existing tests pass after bug fixes",
+      "steps": [
+        "Run pytest -v",
+        "Verify all 8 existing tests pass",
+        "Fix any failures introduced by changes"
+      ],
+      "verification": "cd pi-mono-py && uv run pytest -v --tb=short",
+      "passes": false
+    },
+    {
+      "id": "P1-001",
+      "category": "phase1_types",
+      "priority": "P1",
+      "description": "Verify all event types have complete fields",
+      "steps": [
+        "Review all 12 event types in types.py",
+        "Verify field completeness matches TypeScript version",
+        "Add missing fields if any",
+        "Add Pydantic validation rules"
+      ],
+      "verification": "uv run pytest packages/pi_ai/tests/test_types.py -v",
+      "passes": true
+    },
+    {
+      "id": "P1-002",
+      "category": "phase1_types",
+      "priority": "P1",
+      "description": "Add JSON serialization/deserialization tests for messages",
+      "steps": [
+        "Create test_message_serialization in test_types.py",
+        "Test UserMessage, AssistantMessage, ToolResultMessage",
+        "Verify JSON schema generation works"
+      ],
+      "verification": "uv run pytest -k test_message_serialization -v",
+      "passes": false
+    },
+    {
+      "id": "P1-003",
+      "category": "phase1_types",
+      "priority": "P1",
+      "description": "Add content type validation tests",
+      "steps": [
+        "Create test_content_type_validation in test_types.py",
+        "Test TextContent, ImageContent, ToolCallContent types",
+        "Verify union type discrimination works"
+      ],
+      "verification": "uv run pytest -k test_content_type -v",
+      "passes": false
+    },
+    {
+      "id": "P2-001",
+      "category": "phase2_providers",
+      "priority": "P2",
+      "description": "Complete OpenAI Provider - Chat Completions API",
+      "steps": [
+        "Implement complete streaming response handling",
+        "Implement tool call handling",
+        "Implement image input support",
+        "Add retry logic with exponential backoff",
+        "Add timeout handling"
+      ],
+      "verification": "uv run pytest packages/pi_ai/providers/test_openai.py -v",
+      "passes": false
+    },
+    {
+      "id": "P2-002",
+      "category": "phase2_providers",
+      "priority": "P2",
+      "description": "Complete OpenAI Provider - Responses API (o1/o3)",
+      "steps": [
+        "Implement reasoning_effort parameter",
+        "Implement non-streaming response handling",
+        "Add test coverage"
+      ],
+      "verification": "uv run pytest packages/pi_ai/providers/test_openai_responses.py -v",
+      "passes": false
+    },
+    {
+      "id": "P2-003",
+      "category": "phase2_providers",
+      "priority": "P2",
+      "description": "Complete Anthropic Provider - Messages API",
+      "steps": [
+        "Implement complete streaming response handling",
+        "Implement tool call handling",
+        "Implement image input support",
+        "Add OAuth token support"
+      ],
+      "verification": "uv run pytest packages/pi_ai/providers/test_anthropic.py -v",
+      "passes": false
+    },
+    {
+      "id": "P2-004",
+      "category": "phase2_providers",
+      "priority": "P2",
+      "description": "Complete Anthropic Provider - Thinking Blocks",
+      "steps": [
+        "Implement thinking_enabled parameter",
+        "Implement thinking_budget_tokens parameter",
+        "Implement thinking event stream"
+      ],
+      "verification": "uv run pytest -k test_anthropic_thinking -v",
+      "passes": false
+    },
+    {
+      "id": "P2-005",
+      "category": "phase2_providers",
+      "priority": "P2",
+      "description": "Complete Google Provider - Generative AI API",
+      "steps": [
+        "Implement complete streaming response handling",
+        "Implement tool call handling",
+        "Implement image input support"
+      ],
+      "verification": "uv run pytest packages/pi_ai/providers/test_google.py -v",
+      "passes": false
+    },
+    {
+      "id": "P2-006",
+      "category": "phase2_providers",
+      "priority": "P2",
+      "description": "Complete cross-provider message transforms",
+      "steps": [
+        "Complete transform_messages() implementation",
+        "Handle thinking block conversion",
+        "Handle tool call ID normalization",
+        "Handle message format adaptation"
+      ],
+      "verification": "uv run pytest packages/pi_ai/providers/test_transform.py -v",
+      "passes": false
+    },
+    {
+      "id": "P3-001",
+      "category": "phase3_models",
+      "priority": "P2",
+      "description": "Add predefined model registration functions",
+      "steps": [
+        "Create register_openai_models() in models.py",
+        "Create register_anthropic_models() in models.py",
+        "Create register_google_models() in models.py",
+        "Create register_all_models() convenience function"
+      ],
+      "verification": "python -c \"from pi_ai.models import register_all_models; register_all_models()\" && echo 'OK'",
+      "passes": false
+    },
+    {
+      "id": "P3-002",
+      "category": "phase3_models",
+      "priority": "P2",
+      "description": "Add predefined model data for OpenAI",
+      "steps": [
+        "Add gpt-4o, gpt-4o-mini model definitions",
+        "Add o1, o3 model definitions with reasoning flag",
+        "Include pricing information"
+      ],
+      "verification": "python -c \"from pi_ai import get_model; m = get_model('openai', 'gpt-4o'); print(m.name)\"",
+      "passes": false
+    },
+    {
+      "id": "P3-003",
+      "category": "phase3_models",
+      "priority": "P2",
+      "description": "Add predefined model data for Anthropic",
+      "steps": [
+        "Add claude-3.5-sonnet, claude-3-opus model definitions",
+        "Include thinking budget limits",
+        "Include pricing information"
+      ],
+      "verification": "python -c \"from pi_ai import get_model; m = get_model('anthropic', 'claude-3-5-sonnet'); print(m.name)\"",
+      "passes": false
+    },
+    {
+      "id": "P4-001",
+      "category": "phase4_agent",
+      "priority": "P2",
+      "description": "Complete agent_loop() implementation",
+      "steps": [
+        "Implement complete message injection",
+        "Implement LLM call handling",
+        "Implement tool execution with parallel support",
+        "Implement event emission",
+        "Implement steering check",
+        "Implement follow-up check"
+      ],
+      "verification": "uv run pytest packages/pi_agent/tests/test_agent_loop.py -v",
+      "passes": false
+    },
+    {
+      "id": "P4-002",
+      "category": "phase4_agent",
+      "priority": "P2",
+      "description": "Add agent retry logic",
+      "steps": [
+        "Implement API error retry with exponential backoff",
+        "Add configurable max retries",
+        "Add error event emission"
+      ],
+      "verification": "uv run pytest -k test_agent_retry -v",
+      "passes": false
+    },
+    {
+      "id": "P4-003",
+      "category": "phase4_agent",
+      "priority": "P2",
+      "description": "Add tool execution timeout and cancellation",
+      "steps": [
+        "Implement tool execution timeout",
+        "Implement cancellation token support",
+        "Add timeout event emission"
+      ],
+      "verification": "uv run pytest -k test_tool_timeout -v",
+      "passes": false
+    },
+    {
+      "id": "P5-001",
+      "category": "phase5_tools",
+      "priority": "P3",
+      "description": "Implement JSON Schema parameter validation",
+      "steps": [
+        "Implement jsonschema-based validation",
+        "Add required field checking",
+        "Add type coercion"
+      ],
+      "verification": "uv run pytest -k test_tool_validation -v",
+      "passes": false
+    },
+    {
+      "id": "P5-002",
+      "category": "phase5_tools",
+      "priority": "P3",
+      "description": "Add built-in tools",
+      "steps": [
+        "Implement read_file tool",
+        "Implement write_file tool",
+        "Implement edit_file tool",
+        "Implement bash tool"
+      ],
+      "verification": "uv run python examples/02_agent_with_tools.py",
+      "passes": false
+    },
+    {
+      "id": "P6-001",
+      "category": "phase6_tests",
+      "priority": "P2",
+      "description": "Configure pytest with coverage",
+      "steps": [
+        "Add pytest-cov to dependencies",
+        "Configure pytest.ini_options in pyproject.toml",
+        "Set coverage targets per module"
+      ],
+      "verification": "uv run pytest --cov=pi_ai --cov=pi_agent --cov-report=term-missing",
+      "passes": false
+    },
+    {
+      "id": "P6-002",
+      "category": "phase6_tests",
+      "priority": "P2",
+      "description": "Add HTTP mocking for provider tests",
+      "steps": [
+        "Add pytest-httpx or respx to dependencies",
+        "Create mock fixtures for OpenAI responses",
+        "Create mock fixtures for Anthropic responses",
+        "Create mock fixtures for Google responses"
+      ],
+      "verification": "uv run pytest packages/pi_ai/providers/ -v",
+      "passes": false
+    },
+    {
+      "id": "P6-003",
+      "category": "phase6_tests",
+      "priority": "P2",
+      "description": "Achieve 80% test coverage for pi-ai",
+      "steps": [
+        "Run coverage report",
+        "Identify uncovered lines",
+        "Add tests for uncovered areas",
+        "Repeat until 80% achieved"
+      ],
+      "verification": "uv run pytest --cov=pi_ai --cov-fail-under=80",
+      "passes": false
+    },
+    {
+      "id": "P6-004",
+      "category": "phase6_tests",
+      "priority": "P2",
+      "description": "Achieve 80% test coverage for pi-agent",
+      "steps": [
+        "Run coverage report",
+        "Identify uncovered lines",
+        "Add tests for uncovered areas",
+        "Repeat until 80% achieved"
+      ],
+      "verification": "uv run pytest --cov=pi_agent --cov-fail-under=80",
+      "passes": false
+    }
+  ]
+}
