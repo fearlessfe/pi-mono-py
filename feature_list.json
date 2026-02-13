@@ -13,7 +13,8 @@
   },
   "features": [
     {
-      "id": "P0-001","passes": true,
+      "id": "P0-001",
+      "passes": true,
       "category": "phase0_bugs",
       "priority": "P0",
       "description": "Fix pi-ai/providers/openai.py - add missing event type imports",
@@ -23,8 +24,7 @@
         "Run python -c \"from pi_ai.providers.openai import stream\" to verify",
         "Run ruff check on the file"
       ],
-      "verification": "python -c \"from pi_ai.providers.openai import stream\" && echo 'OK'",
-      "passes": false
+      "verification": "python -c \"from pi_ai.providers.openai import stream\" && echo 'OK'"
     },
     {
       "id": "P0-002",
@@ -39,7 +39,7 @@
         "Run python import check"
       ],
       "verification": "python -c \"from pi_ai.providers.anthropic import stream\" && echo 'OK'",
-      "passes": false
+      "passes": true
     },
     {
       "id": "P0-003",
@@ -53,7 +53,7 @@
         "Run python import check"
       ],
       "verification": "python -c \"from pi_ai.providers.google import stream\" && echo 'OK'",
-      "passes": false
+      "passes": true
     },
     {
       "id": "P0-004",
@@ -67,7 +67,7 @@
         "Run python import check"
       ],
       "verification": "python -c \"from pi_ai.providers.transform import transform_messages\" && echo 'OK'",
-      "passes": false
+      "passes": true
     },
     {
       "id": "P0-005",
@@ -81,7 +81,7 @@
         "Run python import check"
       ],
       "verification": "python -c \"from pi_ai.registry import register_api, get_api\" && echo 'OK'",
-      "passes": false
+      "passes": true
     },
     {
       "id": "P0-006",
@@ -94,7 +94,7 @@
         "Fix any failures introduced by changes"
       ],
       "verification": "cd pi-mono-py && uv run pytest -v --tb=short",
-      "passes": false
+      "passes": true
     },
     {
       "id": "P1-001",
@@ -121,7 +121,7 @@
         "Verify JSON schema generation works"
       ],
       "verification": "uv run pytest -k test_message_serialization -v",
-      "passes": false
+      "passes": true
     },
     {
       "id": "P1-003",
@@ -134,7 +134,7 @@
         "Verify union type discrimination works"
       ],
       "verification": "uv run pytest -k test_content_type -v",
-      "passes": false
+      "passes": true
     },
     {
       "id": "P2-001",
@@ -230,7 +230,7 @@
         "Create register_all_models() convenience function"
       ],
       "verification": "python -c \"from pi_ai.models import register_all_models; register_all_models()\" && echo 'OK'",
-      "passes": false
+      "passes": true
     },
     {
       "id": "P3-002",
@@ -243,7 +243,7 @@
         "Include pricing information"
       ],
       "verification": "python -c \"from pi_ai import get_model; m = get_model('openai', 'gpt-4o'); print(m.name)\"",
-      "passes": false
+      "passes": true
     },
     {
       "id": "P3-003",
@@ -256,7 +256,7 @@
         "Include pricing information"
       ],
       "verification": "python -c \"from pi_ai import get_model; m = get_model('anthropic', 'claude-3-5-sonnet'); print(m.name)\"",
-      "passes": false
+      "passes": true
     },
     {
       "id": "P4-001",
@@ -272,7 +272,7 @@
         "Implement follow-up check"
       ],
       "verification": "uv run pytest packages/pi_agent/tests/test_agent_loop.py -v",
-      "passes": false
+      "passes": true
     },
     {
       "id": "P4-002",
@@ -285,7 +285,7 @@
         "Add error event emission"
       ],
       "verification": "uv run pytest -k test_agent_retry -v",
-      "passes": false
+      "passes": true
     },
     {
       "id": "P4-003",
@@ -298,7 +298,7 @@
         "Add timeout event emission"
       ],
       "verification": "uv run pytest -k test_tool_timeout -v",
-      "passes": false
+      "passes": true
     },
     {
       "id": "P5-001",
@@ -311,7 +311,7 @@
         "Add type coercion"
       ],
       "verification": "uv run pytest -k test_tool_validation -v",
-      "passes": false
+      "passes": true
     },
     {
       "id": "P5-002",
@@ -325,7 +325,7 @@
         "Implement bash tool"
       ],
       "verification": "uv run python examples/02_agent_with_tools.py",
-      "passes": false
+      "passes": true
     },
     {
       "id": "P6-001",
@@ -338,7 +338,7 @@
         "Set coverage targets per module"
       ],
       "verification": "uv run pytest --cov=pi_ai --cov=pi_agent --cov-report=term-missing",
-      "passes": false
+      "passes": true
     },
     {
       "id": "P6-002",
@@ -352,7 +352,7 @@
         "Create mock fixtures for Google responses"
       ],
       "verification": "uv run pytest packages/pi_ai/providers/ -v",
-      "passes": false
+      "passes": true
     },
     {
       "id": "P6-003",
@@ -366,7 +366,7 @@
         "Repeat until 80% achieved"
       ],
       "verification": "uv run pytest --cov=pi_ai --cov-fail-under=80",
-      "passes": false
+      "passes": true
     },
     {
       "id": "P6-004",
@@ -380,7 +380,7 @@
         "Repeat until 80% achieved"
       ],
       "verification": "uv run pytest --cov=pi_agent --cov-fail-under=80",
-      "passes": false
+      "passes": true
     }
   ]
 }
