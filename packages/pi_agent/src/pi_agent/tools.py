@@ -379,6 +379,143 @@ def get_builtin_tools() -> list[AgentTool]:
     return [
         create_read_file_tool(),
         create_write_file_tool(),
+        create_edit_file_tool(),
         create_bash_tool(),
         create_grep_tool(),
     ]
+
+
+# ============================================================================
+# Edit File Tool
+# ============================================================================
+
+
+async def _execute_edit_file(
+    tool_call_id: str,
+    args: dict[str, Any],
+    cancel_event: asyncio.Event | None,
+    on_update: AgentToolUpdateCallback | None,
+) -> AgentToolResult:
+    """Execute edit_file tool.
+    
+    Performs a precise string replacement in a file.
+    The old_string must exist exactly as provided for the edit to succeed.
+    """
+    file_path = args.get("file_path", "")
+    old_string = args.get("old_string", "")
+    new_string = args.get("new_string", "")
+    replace_all = args.get("replace_all", False)
+    
+    # Validate required parameters
+    if not file_path:
+        return AgentToolResult(
+            content=[TextContent(type="text", text="Error: file_path is required")],
+            details={"error": "missing_file_path"},
+        )
+    
+    if not old_string:
+        return AgentToolResult(
+            content=[TextContent(type="text", text="Error: old_string is required")],
+            details={"error": "missing_old_string"},
+        )
+    
+    try:
+        # Read the file
+        with open(file_path, "r", encoding="utf-8") as f:
+            content = f.read()
+        
+        # Count occurrences
+        occurrences = content.count(old_string)
+        
+        if occurrences == 0:
+            return AgentToolResult(
+                content=[TextContent(type="text", text=f"Error: old_string not found in {file_path}")],
+                details={
+                    "error": "old_string_not_found",
+                    "file_path": file_path,
+                    "old_string_length": len(old_string),
+                },
+            )
+        
+        # Perform replacement
+        if replace_all:
+            new_content = content.replace(old_string, new_string)
+            replacements = occurrences
+        else:
+            if occurrences > 1:
+                return AgentToolResult(
+                    content=[TextContent(type="text", text=f"Error: old_string found {occurrences} times in {file_path}. Use replace_all=true to replace all occurrences, or provide a more specific old_string.")],
+                    details={
+                        "error": "multiple_matches",
+                        "file_path": file_path,
+                        "occurrences": occurrences,
+                    },
+                )
+            new_content = content.replace(old_string, new_string, 1)
+            replacements = 1
+        
+        # Write back
+        with open(file_path, "w", encoding="utf-8") as f:
+            f.write(new_content)
+        
+        return AgentToolResult(
+            content=[TextContent(type="text", text=f"Successfully edited {file_path}: replaced {replacements} occurrence(s)")],
+            details={
+                "file_path": file_path,
+                "replacements": replacements,
+                "old_length": len(old_string),
+                "new_length": len(new_string),
+            },
+        )
+    
+    except FileNotFoundError:
+        return AgentToolResult(
+            content=[TextContent(type="text", text=f"Error: File not found: {file_path}")],
+            details={"error": "file_not_found", "file_path": file_path},
+        )
+    except PermissionError:
+        return AgentToolResult(
+            content=[TextContent(type="text", text=f"Error: Permission denied: {file_path}")],
+            details={"error": "permission_denied", "file_path": file_path},
+        )
+    except Exception as e:
+        return AgentToolResult(
+            content=[TextContent(type="text", text=f"Error editing file: {e}")],
+            details={"error": str(e), "file_path": file_path},
+        )
+
+
+EDIT_FILE_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "file_path": {
+            "type": "string",
+            "description": "The path to the file to edit",
+        },
+        "old_string": {
+            "type": "string",
+            "description": "The text to search for and replace",
+        },
+        "new_string": {
+            "type": "string",
+            "description": "The text to replace old_string with",
+        },
+        "replace_all": {
+            "type": "boolean",
+            "description": "If true, replace all occurrences. If false (default), only replace the first occurrence and error if multiple matches found.",
+            "default": False,
+        },
+    },
+    "required": ["file_path", "old_string", "new_string"],
+}
+
+
+def create_edit_file_tool() -> AgentTool:
+    """Create an edit_file tool for precise string replacement."""
+    return create_tool(
+        name="edit_file",
+        description="Perform a precise string replacement in a file. The old_string must match exactly for the edit to succeed. Use this for surgical edits rather than rewriting entire files.",
+        parameters=EDIT_FILE_SCHEMA,
+        execute_fn=_execute_edit_file,
+        label="Edit File",
+    )
