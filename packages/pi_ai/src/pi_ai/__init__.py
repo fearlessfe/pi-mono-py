@@ -10,6 +10,7 @@ from pi_ai.models import (
     register_mistral_models,
     register_xai_models,
     register_openrouter_models,
+    register_azure_openai_models,
 )
 from pi_ai.providers import (
     ApiProvider,
@@ -19,9 +20,11 @@ from pi_ai.providers import (
     stream_mistral,
     stream_xai,
     stream_openrouter,
+    stream_azure_openai,
 )
 from pi_ai.providers.transform import transform_messages
 from pi_ai.stream import complete, complete_simple, stream, stream_simple
+from pi_ai.stream_proxy import stream_proxy, ProxyConfig
 from pi_ai.types import (
     Api,
     ApiProvider as TypesApiProvider,
@@ -53,12 +56,15 @@ __all__ = [
     "complete",
     "stream_simple",
     "complete_simple",
+    "stream_proxy",
+    "ProxyConfig",
     "stream_openai_completions",
     "stream_anthropic_messages",
     "stream_google",
     "stream_mistral",
     "stream_xai",
     "stream_openrouter",
+    "stream_azure_openai",
     "transform_messages",
     "get_model",
     "get_models",
@@ -67,6 +73,7 @@ __all__ = [
     "register_mistral_models",
     "register_xai_models",
     "register_openrouter_models",
+    "register_azure_openai_models",
     "get_env_api_key",
     "AssistantMessageEventStream",
     "Api",

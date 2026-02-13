@@ -12,6 +12,7 @@ from pi_ai.providers.zhipu import stream_zhipu
 from pi_ai.providers.mistral import stream_mistral
 from pi_ai.providers.xai import stream_xai
 from pi_ai.providers.openrouter import stream_openrouter
+from pi_ai.providers.azure_openai import stream_azure_openai
 from pi_ai.providers.transform import transform_messages
 
 StreamFunction = Callable[
@@ -113,6 +114,15 @@ register_api_provider(
     "openrouter",
 )
 
+register_api_provider(
+    ApiProvider(
+        api="azure-openai-responses",
+        stream=stream_azure_openai,
+        stream_simple=stream_azure_openai,
+    ),
+    "azure-openai",
+)
+
 __all__ = [
     "stream_openai_completions",
     "stream_anthropic_messages",
@@ -121,6 +131,7 @@ __all__ = [
     "stream_mistral",
     "stream_xai",
     "stream_openrouter",
+    "stream_azure_openai",
     "transform_messages",
     "ApiProvider",
 ]

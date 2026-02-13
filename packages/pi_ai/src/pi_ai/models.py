@@ -379,6 +379,68 @@ def register_zhipu_models(base_url: str = "https://open.bigmodel.cn/api/paas/v4"
         register_model(model)
 
 
+def register_azure_openai_models(azure_resource: str = "your-resource-name") -> None:
+    """Register Azure OpenAI models.
+    
+    Note: Azure OpenAI requires deployment-based URLs. The base_url should be
+    https://{resource-name}.openai.azure.com and model.id should be {deployment-id}.
+    Users should call register_model() with their specific deployment names.
+    """
+    base_url = f"https://{azure_resource}.openai.azure.com"
+    azure_models = [
+        Model(
+            id="gpt-4o",
+            name="GPT-4o (Azure)",
+            api="azure-openai-responses",
+            provider="azure-openai",
+            base_url=base_url,
+            reasoning=False,
+            input=["text", "image"],
+            cost=ModelCost(input=2.50, output=10.00, cache_read=0, cache_write=0),
+            context_window=128000,
+            max_tokens=4096,
+        ),
+        Model(
+            id="gpt-4o-mini",
+            name="GPT-4o Mini (Azure)",
+            api="azure-openai-responses",
+            provider="azure-openai",
+            base_url=base_url,
+            reasoning=False,
+            input=["text", "image"],
+            cost=ModelCost(input=0.15, output=0.60, cache_read=0, cache_write=0),
+            context_window=128000,
+            max_tokens=4096,
+        ),
+        Model(
+            id="gpt-4-turbo",
+            name="GPT-4 Turbo (Azure)",
+            api="azure-openai-responses",
+            provider="azure-openai",
+            base_url=base_url,
+            reasoning=False,
+            input=["text", "image"],
+            cost=ModelCost(input=10.00, output=30.00, cache_read=0, cache_write=0),
+            context_window=128000,
+            max_tokens=4096,
+        ),
+        Model(
+            id="gpt-35-turbo",
+            name="GPT-3.5 Turbo (Azure)",
+            api="azure-openai-responses",
+            provider="azure-openai",
+            base_url=base_url,
+            reasoning=False,
+            input=["text"],
+            cost=ModelCost(input=0.50, output=1.50, cache_read=0, cache_write=0),
+            context_window=16384,
+            max_tokens=4096,
+        ),
+    ]
+    for model in azure_models:
+        register_model(model)
+
+
 def register_all_models(
     openai_base_url: str = "https://api.openai.com/v1",
     anthropic_base_url: str = "https://api.anthropic.com",
@@ -387,6 +449,7 @@ def register_all_models(
     mistral_base_url: str = "https://api.mistral.ai/v1",
     xai_base_url: str = "https://api.x.ai/v1",
     openrouter_base_url: str = "https://openrouter.ai/api/v1",
+    azure_resource: str = "your-resource-name",
 ) -> None:
     register_openai_models(openai_base_url)
     register_anthropic_models(anthropic_base_url)
@@ -395,6 +458,7 @@ def register_all_models(
     register_mistral_models(mistral_base_url)
     register_xai_models(xai_base_url)
     register_openrouter_models(openrouter_base_url)
+    register_azure_openai_models(azure_resource)
 
 
 def register_mistral_models(base_url: str = "https://api.mistral.ai/v1") -> None:

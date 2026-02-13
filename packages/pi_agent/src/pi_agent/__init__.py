@@ -26,6 +26,9 @@ from pi_agent.tools import (
     ToolValidationError,
 )
 
+# Re-export stream_proxy from pi_ai for convenience
+from pi_ai.stream_proxy import stream_proxy, ProxyConfig
+
 __all__ = [
     "Agent",
     "AgentContext",
@@ -49,4 +52,6 @@ __all__ = [
     "validate_tool_params",
     "validate_tool_call",
     "ToolValidationError",
+    "stream_proxy",
+    "ProxyConfig",
 ]
