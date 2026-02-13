@@ -8,6 +8,7 @@ from pi_ai.event_stream import AssistantMessageEventStream
 from pi_ai.providers.openai import stream_openai_completions
 from pi_ai.providers.anthropic import stream_anthropic_messages
 from pi_ai.providers.google import stream_google
+from pi_ai.providers.zhipu import stream_zhipu
 from pi_ai.providers.transform import transform_messages
 
 StreamFunction = Callable[
@@ -73,10 +74,20 @@ register_api_provider(
     "google",
 )
 
+register_api_provider(
+    ApiProvider(
+        api="zhipu-chat",
+        stream=stream_zhipu,
+        stream_simple=stream_zhipu,
+    ),
+    "zhipu",
+)
+
 __all__ = [
     "stream_openai_completions",
     "stream_anthropic_messages",
     "stream_google",
+    "stream_zhipu",
     "transform_messages",
     "ApiProvider",
 ]

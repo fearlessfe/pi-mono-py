@@ -20,6 +20,7 @@ _PROVIDER_ENV_MAP: dict[str, str] = {
     "huggingface": "HF_TOKEN",
     "opencode": "OPENCODE_API_KEY",
     "kimi-coding": "KIMI_API_KEY",
+    "zhipu": "ZHIPU_API_KEY",
 }
 
 
