@@ -40,7 +40,9 @@ def test_agent_tool_result():
         content=[TextContent(type="text", text="Tool output")],
         details={"path": "/tmp/file.txt"},
     )
-    assert result.content[0].text == "Tool output"
+    content = result.content[0]
+    assert isinstance(content, TextContent)
+    assert content.text == "Tool output"
     assert result.details == {"path": "/tmp/file.txt"}
 
 

@@ -10,7 +10,7 @@ def test_user_message_creation():
         timestamp=1234567890,
     )
     assert msg.role == "user"
-    assert msg.content[0].text == "Hello"
+    assert msg.content[0].text  # type: ignore[union-attr] == "Hello"
 
 
 def test_model_cost_calculation():
@@ -88,6 +88,8 @@ def test_message_serialization():
         TextContent,
         ToolCall,
         ToolResultMessage,
+        Usage,
+        UsageCost,
         UserMessage,
     )
 
@@ -107,7 +109,7 @@ def test_message_serialization():
 
     user_restored = UserMessage.model_validate(user_json)
     assert user_restored.role == "user"
-    assert user_restored.content[0].text == "Hello"
+    assert user_restored.content[0].text  # type: ignore[union-attr] == "Hello"
 
     assistant_msg = AssistantMessage(
         role="assistant",
@@ -124,14 +126,14 @@ def test_message_serialization():
         api="anthropic",
         provider="anthropic",
         model="claude-3-5-sonnet",
-        usage={
-            "input": 100,
-            "output": 50,
-            "cache_read": 0,
-            "cache_write": 0,
-            "total_tokens": 150,
-            "cost": {"input": 0, "output": 0, "cache_read": 0, "cache_write": 0, "total": 0},
-        },
+        usage=Usage(
+            input=100,
+            output=50,
+            cacheRead=0,
+            cacheWrite=0,
+            totalTokens=150,
+            cost=UsageCost(),
+        ),
         timestamp=1234567891,
         stopReason="toolUse",
     )
@@ -142,7 +144,9 @@ def test_message_serialization():
 
     assistant_restored = AssistantMessage.model_validate(assistant_json)
     assert assistant_restored.role == "assistant"
-    assert assistant_restored.content[1].name == "get_weather"
+    content1 = assistant_restored.content[1]
+    assert isinstance(content1, ToolCall)
+    assert content1.name == "get_weather"
 
     tool_result_msg = ToolResultMessage(
         role="toolResult",
@@ -198,7 +202,7 @@ def test_content_type_validation():
     assert text.text == "Hello world"
 
     with pytest.raises(pydantic.ValidationError):
-        TextContent(type="text")
+        TextContent(type="text")  # type: ignore[call-arg]
 
     image = ImageContent(
         type="image",
@@ -209,7 +213,7 @@ def test_content_type_validation():
     assert image.mime_type == "image/png"
 
     with pytest.raises(pydantic.ValidationError):
-        ImageContent(type="image")
+        ImageContent(type="image")  # type: ignore[call-arg]
 
     thinking = ThinkingContent(
         type="thinking",

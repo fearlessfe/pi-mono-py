@@ -148,7 +148,7 @@ class TestToolExecution:
         result = await test_tool.execute("call_123", {"arg1": "value"}, None, None)
 
         assert result is not None
-        assert result.content[0].text == "Tool result"
+        assert result.content[0].text  # type: ignore[union-attr] == "Tool result"
 
     @pytest.mark.asyncio
     async def test_tool_execution_with_error(self):

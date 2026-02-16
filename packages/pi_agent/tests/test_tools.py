@@ -92,7 +92,7 @@ class TestCreateTool:
         )
 
         result = await tool.execute("call-1", {"required_field": "value"}, None, None)
-        assert "Success" in result.content[0].text
+        assert "Success" in result.content[0].text  # type: ignore[union-attr]
 
 
 class TestBuiltinTools:
@@ -155,7 +155,7 @@ class TestToolExecution:
             None,
         )
 
-        assert "Hello World" in result.content[0].text
+        assert "Hello World" in result.content[0].text  # type: ignore[union-attr]
 
     @pytest.mark.asyncio
     async def test_read_file_not_found(self):
@@ -169,8 +169,8 @@ class TestToolExecution:
         )
 
         assert (
-            "not found" in result.content[0].text.lower()
-            or "error" in result.content[0].text.lower()
+            "not found" in result.content[0].text  # type: ignore[union-attr].lower()
+            or "error" in result.content[0].text  # type: ignore[union-attr].lower()
         )
 
     @pytest.mark.asyncio
@@ -194,7 +194,7 @@ class TestToolExecution:
                 None,
             )
 
-            assert "Successfully edited" in result.content[0].text
+            assert "Successfully edited" in result.content[0].text  # type: ignore[union-attr]
             assert result.details.get("replacements") == 1
 
             with open(temp_file) as f:
@@ -226,8 +226,8 @@ class TestToolExecution:
             )
 
             assert (
-                "error" in result.content[0].text.lower()
-                or "found 2 times" in result.content[0].text
+                "error" in result.content[0].text  # type: ignore[union-attr].lower()
+                or "found 2 times" in result.content[0].text  # type: ignore[union-attr]
             )
             assert result.details.get("error") == "multiple_matches"
         finally:
@@ -255,7 +255,7 @@ class TestToolExecution:
                 None,
             )
 
-            assert "Successfully edited" in result.content[0].text
+            assert "Successfully edited" in result.content[0].text  # type: ignore[union-attr]
             assert result.details.get("replacements") == 2
 
             with open(temp_file) as f:
@@ -286,7 +286,7 @@ class TestToolExecution:
                 None,
             )
 
-            assert "not found" in result.content[0].text.lower()
+            assert "not found" in result.content[0].text  # type: ignore[union-attr].lower()
             assert result.details.get("error") == "old_string_not_found"
         finally:
             os.unlink(temp_file)

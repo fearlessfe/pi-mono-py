@@ -70,7 +70,7 @@ class TestOpenAIProvider:
         user_msgs = [
             UserMessage(role="user", content=[TextContent(type="text", text="Hi")], timestamp=0)
         ]
-        assert has_tool_history(user_msgs) is False
+        assert has_tool_history(user_msgs) is False  # type: ignore[arg-type]
 
         assistant_with_tool = [
             AssistantMessage(
@@ -90,4 +90,4 @@ class TestOpenAIProvider:
                 timestamp=0,
             )
         ]
-        assert has_tool_history(assistant_with_tool) is True
+        assert has_tool_history(assistant_with_tool) is True  # type: ignore[arg-type]

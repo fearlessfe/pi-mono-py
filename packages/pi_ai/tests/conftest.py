@@ -118,7 +118,7 @@ def mock_openai_stream():
             + format_sse(MockResponses.MOCK_OPENAI_DONE)
             + "data: [DONE]\n\n"
         )
-        respx_mock.post(f"{base_url}/chat/completions").mock(
+        respx_mock.post(f"{baseUrl}/chat/completions").mock(
             return_value=httpx.Response(
                 200, content=sse_data.encode(), headers={"content-type": "text/event-stream"}
             )
@@ -136,8 +136,8 @@ def mock_anthropic_stream():
             + format_sse(MockResponses.MOCK_ANTHROPIC_CONTENT_DELTA)
             + format_sse(MockResponses.MOCK_ANTHROPIC_MESSAGE_STOP)
         )
-        respx_mock.post(f"{base_url}/v1/messages").mock(
-            return_value=respx.Response(
+        respx_mock.post(f"{baseUrl}/v1/messages").mock(
+            return_value=httpx.Response(
                 200, content=sse_data, headers={"content-type": "text/event-stream"}
             )
         )
@@ -150,8 +150,8 @@ def mock_google_stream():
     def _mock(respx_mock, baseUrl="https://generativelanguage.googleapis.com"):
 
         sse_data = format_sse(MockResponses.MOCK_GOOGLE_RESPONSE)
-        respx_mock.post(f"{base_url}/v1beta/models/gemini-2.0-flash:streamGenerateContent").mock(
-            return_value=respx.Response(
+        respx_mock.post(f"{baseUrl}/v1beta/models/gemini-2.0-flash:streamGenerateContent").mock(
+            return_value=httpx.Response(
                 200, content=sse_data, headers={"content-type": "text/event-stream"}
             )
         )
