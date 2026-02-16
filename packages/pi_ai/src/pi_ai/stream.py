@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from pi_ai.event_stream import AssistantMessageEventStream
-from pi_ai.registry import get_api_provider
-from pi_ai.types import AssistantMessage, Context, Model, SimpleStreamOptions, StreamOptions
+from .event_stream import AssistantMessageEventStream
+from .registry import get_api_provider
+from .types import AssistantMessage, Context, Model, SimpleStreamOptions, StreamOptions
 
 
 def _resolve_api_provider(api: str):

@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import Any
 
-from pi_ai.types import (
+from ..types import (
     Api,
     AssistantMessage,
     Message,
@@ -70,8 +70,11 @@ def transform_messages(
             existing_tool_result_ids.add(tc_id)
             second_pass.append(msg)
         elif role == "assistant":
-            content = msg.get("content") if isinstance(msg, dict) else msg.content
-            tool_calls = [b for b in content if isinstance(b, ToolCall)]
+            content = msg.get("content", []) if isinstance(msg, dict) else msg.content
+            if content:
+                tool_calls = [b for b in content if isinstance(b, ToolCall)]
+            else:
+                tool_calls = []
             if tool_calls:
                 for tc in tool_calls:
                     pending_tool_calls.append(tc)

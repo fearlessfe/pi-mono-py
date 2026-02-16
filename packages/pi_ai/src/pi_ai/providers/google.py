@@ -4,7 +4,7 @@ import asyncio
 import json
 from typing import Any, cast
 
-from pi_ai.types import (
+from ..types import (
     AssistantMessage,
     AssistantMessageEvent,
     Context,
@@ -27,21 +27,21 @@ from pi_ai.types import (
     Usage,
     UsageCost,
 )
-from pi_ai.event_stream import AssistantMessageEventStream
-from pi_ai.env_keys import get_env_api_key
-from pi_ai.models import calculate_cost
-from pi_ai.stream import stream_simple
+from ..event_stream import AssistantMessageEventStream
+from ..env_keys import get_env_api_key
+from ..models import calculate_cost
+from ..stream import stream_simple
 
 try:
-    from google.generativeai import GenerativeModel, Part
+    from google.generativeai import GenerativeModel, Part  # type: ignore[import-untyped]
 except ImportError:
-    GenerativeModel = None
-    Part = None
+    GenerativeModel = None  # type: ignore[misc,assignment]
+    Part = None  # type: ignore[misc,assignment]
 
 try:
     import httpx
 except ImportError:
-    httpx = None
+    httpx = None  # type: ignore[misc,assignment]
 
 
 def is_gemini_3_pro_model(model: Model) -> bool:
@@ -66,6 +66,7 @@ def get_thinking_budget(model: Model, level: str | None) -> int | None:
     if not level or not is_gemini_3_pro_model(model) and not is_gemini_3_flash_model(model):
         return None
 
+    budgets: dict[str, int] = {}
     if is_gemini_3_pro_model(model):
         budgets = {"minimal": 128, "low": 2048, "medium": 8192, "high": 32768}
     elif is_gemini_3_flash_model(model):
@@ -77,6 +78,13 @@ def get_thinking_budget(model: Model, level: str | None) -> int | None:
 tool_call_counter = 0
 
 
+async def _parse_sse_chunks(response: Any):
+    """Parse SSE response chunks."""
+    async for line in response:
+        if line.strip():
+            yield line
+
+
 class GoogleOptions:
     def __init__(
         self,
@@ -84,11 +92,15 @@ class GoogleOptions:
         thinking_enabled: bool = False,
         thinking_budget_tokens: int | None = None,
         thinking_level: str | None = None,
+        temperature: float | None = None,
+        max_tokens: int | None = None,
     ) -> None:
         self.tool_choice = tool_choice
         self.thinking_enabled = thinking_enabled
         self.thinking_budget_tokens = thinking_budget_tokens
         self.thinking_level = thinking_level
+        self.temperature = temperature
+        self.max_tokens = max_tokens
 
 
 def stream_google(
@@ -108,12 +120,12 @@ def stream_google(
             usage=Usage(
                 input=0,
                 output=0,
-                cache_read=0,
-                cache_write=0,
-                total_tokens=0,
+                cacheRead=0,
+                cacheWrite=0,
+                totalTokens=0,
                 cost=UsageCost(),
             ),
-            stop_reason="stop",
+            stopReason="stop",
             timestamp=0,
         )
 
@@ -170,7 +182,7 @@ def stream_google(
                             current_block.text += part_text
                             stream.push(
                                 TextDeltaEvent(
-                                    content_index=block_index[-1],
+                                    contentIndex=block_index[-1],
                                     delta=part_text,
                                     partial=output,
                                 )
@@ -190,7 +202,7 @@ def stream_google(
                             current_block.thinking += part_text
                             stream.push(
                                 ThinkingDeltaEvent(
-                                    content_index=block_index[-1],
+                                    contentIndex=block_index[-1],
                                     delta=part_text,
                                     partial=output,
                                 )
@@ -207,37 +219,38 @@ def stream_google(
                                 id="",
                                 name="",
                                 arguments={},
-                                thought_signature=None,
+                                thoughtSignature=None,
                             )
                             output.content.append(current_block)
                             block_index.append(len(output.content) - 1)
 
                         current_block.name = function_name
+                        global tool_call_counter
                         current_block.id = f"{function_name}_{tool_call_counter}"
                         tool_call_counter += 1
                         current_block.arguments.update(json.loads(function_args) if isinstance(function_args, str) else function_args)
 
                         stream.push(
                             ToolcallEndEvent(
-                                content_index=block_index[-1],
-                                tool_call=current_block,
+                                contentIndex=block_index[-1],
+                                toolCall=current_block,
                                 partial=output,
                             )
                         )
 
                     elif part_type == "function_response":
-                        if "response" in part:
+                        if "response" in part and current_block:
                             function_response = part["response"]
                             for part_response_item in function_response:
                                 part_response_type = part_response_item.get("type", "")
                                 part_response_text = part_response_item.get("text", "")
                                 part_response_name = part_response_item.get("name", "")
 
-                                if part_response_type == "text":
+                                if part_response_type == "text" and current_block.type == "text":
                                     current_block.text += part_response_text
                                     stream.push(
                                         TextDeltaEvent(
-                                            content_index=block_index[-1],
+                                            contentIndex=block_index[-1],
                                             delta=part_response_text,
                                             partial=output,
                                         )
@@ -252,9 +265,9 @@ def stream_google(
                     output.usage = Usage(
                         input=usage_metadata.get("promptTokenCount", 0),
                         output=usage_metadata.get("candidatesTokenCount", 0) + usage_metadata.get("thoughtsTokenCount", 0),
-                        cache_read=0,
-                        cache_write=0,
-                        total_tokens=usage_metadata.get("totalTokenCount", 0),
+                        cacheRead=0,
+                        cacheWrite=0,
+                        totalTokens=usage_metadata.get("totalTokenCount", 0),
                         cost=calculate_cost(model, output.usage),
                     )
 
@@ -354,9 +367,12 @@ def _format_assistant_parts(content: list) -> list[dict[str, Any]]:
 
 async def http_client_stream(
     model: Model,
-    params: dict,
-    headers: dict,
+    params: dict[str, Any],
+    headers: dict[str, str],
 ) -> Any:
+    if httpx is None:
+        raise ImportError("httpx is required for Google provider. Install with: pip install httpx")
+    
     url = f"{model.base_url}/v1beta/models/{model.id}:streamGenerateContent"
 
     async with httpx.AsyncClient(

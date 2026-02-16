@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from pi_ai.env_keys import get_env_api_key
-from pi_ai.event_stream import AssistantMessageEventStream
-from pi_ai.models import (
+from .env_keys import get_env_api_key
+from .event_stream import AssistantMessageEventStream
+from .models import (
     get_model,
     get_models,
     get_providers,
@@ -12,7 +12,7 @@ from pi_ai.models import (
     register_openrouter_models,
     register_azure_openai_models,
 )
-from pi_ai.providers import (
+from .providers import (
     ApiProvider,
     stream_anthropic_messages,
     stream_google,
@@ -22,10 +22,10 @@ from pi_ai.providers import (
     stream_openrouter,
     stream_azure_openai,
 )
-from pi_ai.providers.transform import transform_messages
-from pi_ai.stream import complete, complete_simple, stream, stream_simple
-from pi_ai.stream_proxy import stream_proxy, ProxyConfig
-from pi_ai.types import (
+from .providers.transform import transform_messages
+from .stream import complete, complete_simple, stream, stream_simple
+from .stream_proxy import stream_proxy, ProxyConfig
+from .types import (
     Api,
     ApiProvider as TypesApiProvider,
     AssistantMessage,

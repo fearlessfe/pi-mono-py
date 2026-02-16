@@ -5,7 +5,7 @@ import asyncio
 import json
 from typing import Any, cast
 
-from pi_ai.types import (
+from .types import (
     AssistantMessage,
     Context,
     DoneEvent,
@@ -23,13 +23,13 @@ from pi_ai.types import (
     UsageCost,
     StartEvent,
 )
-from pi_ai.event_stream import AssistantMessageEventStream
-from pi_ai.models import calculate_cost
+from .event_stream import AssistantMessageEventStream
+from .models import calculate_cost
 
 try:
     import httpx
 except ImportError:
-    httpx = None
+    httpx = None  # type: ignore[misc,assignment]
 
 
 class ProxyConfig:
@@ -96,12 +96,12 @@ def stream_proxy(
             usage=Usage(
                 input=0,
                 output=0,
-                cache_read=0,
-                cache_write=0,
-                total_tokens=0,
+                cacheRead=0,
+                cacheWrite=0,
+                totalTokens=0,
                 cost=UsageCost(),
             ),
-            stop_reason="stop",
+            stopReason="stop",
             timestamp=0,
         )
 
@@ -154,9 +154,9 @@ def stream_proxy(
                             output.usage = Usage(
                                 input=usage_data.get("prompt_tokens", 0),
                                 output=usage_data.get("completion_tokens", 0),
-                                cache_read=usage_data.get("prompt_tokens_details", {}).get("cached_tokens", 0),
-                                cache_write=0,
-                                total_tokens=usage_data.get("total_tokens", 0),
+                                cacheRead=usage_data.get("prompt_tokens_details", {}).get("cached_tokens", 0),
+                                cacheWrite=0,
+                                totalTokens=usage_data.get("total_tokens", 0),
                                 cost=calculate_cost(model, output.usage),
                             )
 
@@ -171,7 +171,7 @@ def stream_proxy(
                                 current_block.text += content
                                 stream.push(
                                     TextDeltaEvent(
-                                        content_index=block_index[-1],
+                                        contentIndex=block_index[-1],
                                         delta=content,
                                         partial=output,
                                     )
@@ -188,7 +188,7 @@ def stream_proxy(
                                 current_block.thinking += reasoning
                                 stream.push(
                                     ThinkingDeltaEvent(
-                                        content_index=block_index[-1],
+                                        contentIndex=block_index[-1],
                                         delta=reasoning,
                                         partial=output,
                                     )
@@ -202,7 +202,7 @@ def stream_proxy(
                                         id="",
                                         name="",
                                         arguments={},
-                                        thought_signature=None,
+                                        thoughtSignature=None,
                                     )
                                     output.content.append(current_block)
                                     block_index.append(len(output.content) - 1)
@@ -225,8 +225,8 @@ def stream_proxy(
 
                                 stream.push(
                                     ToolcallEndEvent(
-                                        content_index=block_index[-1],
-                                        tool_call=current_block,
+                                        contentIndex=block_index[-1],
+                                        toolCall=current_block,
                                         partial=output,
                                     )
                                 )

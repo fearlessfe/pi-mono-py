@@ -2,5 +2,9 @@
     "venvPath": ".",
     "venv": ".venv",
     "pythonVersion": "3.11",
-    "typeCheckingMode": "standard"
+    "typeCheckingMode": "standard",
+    "extraPaths": [
+        "packages/pi_ai/src",
+        "packages/pi_agent/src"
+    ]
 }

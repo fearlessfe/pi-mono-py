@@ -3,18 +3,21 @@ from __future__ import annotations
 
 import asyncio
 import json
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
 try:
     import jsonschema
     from jsonschema import validate, ValidationError as JsonSchemaValidationError
-    HAS_JSONSCHEMA = True
+    _has_jsonschema = True
 except ImportError:
-    HAS_JSONSCHEMA = False
-    JsonSchemaValidationError = Exception  # type: ignore
+    _has_jsonschema = False
+    JsonSchemaValidationError = Exception  # type: ignore[misc,assignment]
 
-from pi_agent.types import AgentTool, AgentToolResult, AgentToolUpdateCallback
+from .types import AgentTool, AgentToolResult, AgentToolUpdateCallback
 from pi_ai.types import TextContent
+
+# Expose the flag for external use
+HAS_JSONSCHEMA = _has_jsonschema
 
 
 class ToolValidationError(Exception):
@@ -34,14 +37,17 @@ def validate_tool_params(
     
     Returns a list of validation errors (empty if valid).
     """
-    if not HAS_JSONSCHEMA:
+    if not _has_jsonschema:
         return []
+    
+    # Import is available here since _has_jsonschema is True
+    from jsonschema import validate  # type: ignore[import-untyped]
     
     errors = []
     try:
         validate(instance=params, schema=schema)
     except JsonSchemaValidationError as e:
-        errors.append(str(e.message))
+        errors.append(str(e))
     
     return errors
 

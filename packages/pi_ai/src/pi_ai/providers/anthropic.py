@@ -4,7 +4,7 @@ import asyncio
 import json
 from typing import Any, cast
 
-from pi_ai.types import (
+from ..types import (
     AssistantMessage,
     AssistantMessageEvent,
     Context,
@@ -33,15 +33,15 @@ from pi_ai.types import (
     UsageCost,
     CacheRetention,
 )
-from pi_ai.event_stream import AssistantMessageEventStream
-from pi_ai.env_keys import get_env_api_key
-from pi_ai.models import calculate_cost
-from pi_ai.stream import stream_simple
+from ..event_stream import AssistantMessageEventStream
+from ..env_keys import get_env_api_key
+from ..models import calculate_cost
+from ..stream import stream_simple
 
 try:
     from anthropic import Anthropic
 except ImportError:
-    Anthropic = None
+    Anthropic = None  # type: ignore[misc,assignment]
 
 
 def normalize_mistral_tool_id(tool_id: str) -> str:
@@ -101,12 +101,12 @@ def stream_anthropic_messages(
             usage=Usage(
                 input=0,
                 output=0,
-                cache_read=0,
-                cache_write=0,
-                total_tokens=0,
+                cacheRead=0,
+                cacheWrite=0,
+                totalTokens=0,
                 cost=UsageCost(),
             ),
-            stop_reason="stop",
+            stopReason="stop",
             timestamp=0,
         )
 
@@ -118,7 +118,7 @@ def stream_anthropic_messages(
             if Anthropic is None:
                 raise ImportError("anthropic is required for Anthropic provider. Install with: pip install anthropic")
 
-            client = Anthropic(api_key=api_key, base_url=model.base_url)
+            client = Anthropic(api_key=api_key, base_url=model.base_url)  # type: ignore[misc]
 
             opts = AnthropicOptions() if options is None else AnthropicOptions(
                 thinking_enabled=options.reasoning is not None,
@@ -148,9 +148,9 @@ def stream_anthropic_messages(
                             output.usage = Usage(
                                 input=usage_data.input_tokens,
                                 output=usage_data.output_tokens,
-                                cache_read=usage_data.cache_read_input_tokens,
-                                cache_write=usage_data.cache_creation_input_tokens,
-                                total_tokens=usage_data.total_tokens,
+                                cacheRead=usage_data.cache_read_input_tokens,
+                                cacheWrite=usage_data.cache_creation_input_tokens,
+                                totalTokens=usage_data.total_tokens,
                                 cost=calculate_cost(model, output.usage),
                             )
 
@@ -161,14 +161,14 @@ def stream_anthropic_messages(
                             output.content.append(current_block)
                             block_index.append(len(output.content) - 1)
                             stream.push(
-                                TextStartEvent(content_index=block_index[-1], partial=output)
+                                TextStartEvent(contentIndex=block_index[-1], partial=output)
                             )
                         elif block.type == "thinking":
                             current_block = ThinkingContent(type="thinking", thinking="", thinking_signature=None)
                             output.content.append(current_block)
                             block_index.append(len(output.content) - 1)
                             stream.push(
-                                ThinkingStartEvent(content_index=block_index[-1], partial=output)
+                                ThinkingStartEvent(contentIndex=block_index[-1], partial=output)
                             )
 
                     elif event_type == "content_block_delta":
@@ -178,7 +178,7 @@ def stream_anthropic_messages(
                                 current_block.text += delta.text
                                 stream.push(
                                     TextDeltaEvent(
-                                        content_index=block_index[-1],
+                                        contentIndex=block_index[-1],
                                         delta=delta.text,
                                         partial=output,
                                     )
@@ -188,7 +188,7 @@ def stream_anthropic_messages(
                         if current_block and current_block.type == "text":
                             stream.push(
                                 TextEndEvent(
-                                    content_index=block_index[-1],
+                                    contentIndex=block_index[-1],
                                     content=current_block.text,
                                     partial=output,
                                 )
@@ -196,7 +196,7 @@ def stream_anthropic_messages(
                         elif current_block and current_block.type == "thinking":
                             stream.push(
                                 ThinkingEndEvent(
-                                    content_index=block_index[-1],
+                                    contentIndex=block_index[-1],
                                     content=current_block.thinking,
                                     partial=output,
                                 )
@@ -209,12 +209,12 @@ def stream_anthropic_messages(
                             id=tool_call.id,
                             name=tool_call.name,
                             arguments=tool_call.input,
-                            thought_signature=tool_call.thought_signature,
+                            thoughtSignature=tool_call.thought_signature,
                         )
                         output.content.append(current_block)
                         block_index.append(len(output.content) - 1)
                         stream.push(
-                            ToolcallStartEvent(content_index=block_index[-1], partial=output)
+                            ToolcallStartEvent(contentIndex=block_index[-1], partial=output)
                         )
 
                     elif event_type == "input_json_delta":
@@ -222,7 +222,7 @@ def stream_anthropic_messages(
                             current_block.arguments.update(json.loads(event.delta))
                             stream.push(
                                 ToolcallDeltaEvent(
-                                    content_index=block_index[-1],
+                                    contentIndex=block_index[-1],
                                     delta=event.delta,
                                     partial=output,
                                 )
@@ -233,8 +233,8 @@ def stream_anthropic_messages(
                             current_block.id = normalize_mistral_tool_id(current_block.id)
                             stream.push(
                                 ToolcallEndEvent(
-                                    content_index=block_index[-1],
-                                    tool_call=current_block,
+                                    contentIndex=block_index[-1],
+                                    toolCall=current_block,
                                     partial=output,
                                 )
                             )
@@ -249,9 +249,9 @@ def stream_anthropic_messages(
                         output.usage = Usage(
                             input=0,
                             output=0,
-                            cache_read=0,
-                            cache_write=0,
-                            total_tokens=0,
+                            cacheRead=0,
+                            cacheWrite=0,
+                            totalTokens=0,
                             cost=calculate_cost(model, output.usage),
                         )
 

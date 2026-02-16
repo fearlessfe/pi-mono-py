@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from pi_ai.types import Model, ModelCost, Usage, UsageCost
+from .types import Model, ModelCost, Usage, UsageCost
 
 
 _model_registry: dict[str, dict[str, Model]] = {}

@@ -32,7 +32,7 @@ class AgentToolResult(BaseModel):
     details: Any = None
 
 
-AgentToolUpdateCallback = Callable[[AgentToolResult], None]
+AgentToolUpdateCallback = Callable[[AgentToolResult], None | Awaitable[None]]
 
 
 class AgentTool(Tool):

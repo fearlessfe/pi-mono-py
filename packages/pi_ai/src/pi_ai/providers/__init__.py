@@ -3,17 +3,17 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import Any
 
-from pi_ai.types import Api, ApiProvider, Context, Model, SimpleStreamOptions, StreamOptions
-from pi_ai.event_stream import AssistantMessageEventStream
-from pi_ai.providers.openai import stream_openai_completions
-from pi_ai.providers.anthropic import stream_anthropic_messages
-from pi_ai.providers.google import stream_google
-from pi_ai.providers.zhipu import stream_zhipu
-from pi_ai.providers.mistral import stream_mistral
-from pi_ai.providers.xai import stream_xai
-from pi_ai.providers.openrouter import stream_openrouter
-from pi_ai.providers.azure_openai import stream_azure_openai
-from pi_ai.providers.transform import transform_messages
+from ..types import Api, ApiProvider, Context, Model, SimpleStreamOptions, StreamOptions
+from ..event_stream import AssistantMessageEventStream
+from .openai import stream_openai_completions
+from .anthropic import stream_anthropic_messages
+from .google import stream_google
+from .zhipu import stream_zhipu
+from .mistral import stream_mistral
+from .xai import stream_xai
+from .openrouter import stream_openrouter
+from .azure_openai import stream_azure_openai
+from .transform import transform_messages
 
 StreamFunction = Callable[
     [Model, Context, StreamOptions | None],

@@ -2,12 +2,15 @@ from __future__ import annotations
 
 import asyncio
 import random
+from collections.abc import Callable, Awaitable
 from typing import Any
 from time import time
 
 from pi_ai.stream import stream_simple
 from pi_ai.types import Context as AiContext, Message, StopReason, Usage, UsageCost, ToolResultMessage, ToolCall, TextContent, AssistantMessage
-from pi_agent.types import (
+from pi_ai.event_stream import EventStream
+
+from .types import (
     AgentContext,
     AgentEvent,
     AgentLoopConfig,
@@ -15,8 +18,6 @@ from pi_agent.types import (
     AgentTool,
     AgentToolResult,
     StreamFn,
-)
-from pi_agent.types import (
     AgentStartEvent,
     AgentEndEvent,
     TurnStartEvent,
@@ -28,7 +29,6 @@ from pi_agent.types import (
     ToolExecutionUpdateEvent,
     ToolExecutionEndEvent,
 )
-from pi_ai.event_stream import EventStream
 
 
 class RateLimitError(Exception):
@@ -211,7 +211,11 @@ async def _stream_assistant_response(
     if config.transform_context:
         messages = await config.transform_context(messages, cancel_event)
 
-    llm_messages = await config.convert_to_llm(messages)
+    llm_messages_raw = config.convert_to_llm(messages)
+    if asyncio.iscoroutine(llm_messages_raw):
+        llm_messages = await llm_messages_raw
+    else:
+        llm_messages = llm_messages_raw
 
     llm_context = AiContext(
         system_prompt=context.system_prompt,
@@ -310,7 +314,7 @@ async def _process_llm_response(
             partial_message = event.partial
             context.messages.append(partial_message)
             added_partial = True
-            stream.push(MessageStartEvent(message=partial_message.model_copy(deep=True)))
+            stream.push(MessageStartEvent(message=event.partial.model_copy(deep=True)))
         elif isinstance(
             event,
             (
@@ -330,7 +334,7 @@ async def _process_llm_response(
                 context.messages[-1] = partial_message
                 stream.push(
                     MessageUpdateEvent(
-                        message=partial_message.model_copy(deep=True),
+                        message=event.partial.model_copy(deep=True),
                         assistant_message_event=event,  # type: ignore[arg-type]
                     )
                 )
@@ -411,21 +415,21 @@ async def _execute_tool_calls(
                     tool_call.id, tool_call.arguments, cancel_event, on_update
                 )
         except asyncio.TimeoutError:
-            from pi_agent.types import AgentToolResult, TextContent
+            from .types import AgentToolResult
             result = AgentToolResult(
                 content=[TextContent(type="text", text=f"Tool '{tool_call.name}' timed out after {tool_timeout_ms}ms")],
                 details={"timeout_ms": tool_timeout_ms},
             )
             is_error = True
         except asyncio.CancelledError:
-            from pi_agent.types import AgentToolResult, TextContent
+            from .types import AgentToolResult
             result = AgentToolResult(
                 content=[TextContent(type="text", text="Tool execution was cancelled")],
                 details={"cancelled": True},
             )
             is_error = True
         except Exception as e:
-            from pi_agent.types import AgentToolResult, TextContent
+            from .types import AgentToolResult
 
             result = AgentToolResult(
                 content=[TextContent(type="text", text=str(e))], details={}
@@ -469,7 +473,7 @@ async def _execute_tool_calls(
 def _skip_tool_call(
     tool_call: ToolCall, stream: EventStream[AgentEvent, list[AgentMessage]]
 ) -> ToolResultMessage:
-    from pi_agent.types import AgentToolResult, TextContent
+    from .types import AgentToolResult
 
     result = AgentToolResult(
         content=[TextContent(type="text", text="Skipped due to queued user message.")],
@@ -537,12 +541,12 @@ def _create_error_message(error_text: str) -> AssistantMessage:
         usage=Usage(
             input=0,
             output=0,
-            cache_read=0,
-            cache_write=0,
-            total_tokens=0,
+            cacheRead=0,
+            cacheWrite=0,
+            totalTokens=0,
             cost=UsageCost(),
         ),
-        stop_reason=StopReason.error,
-        error_message=error_text,
+        stopReason=StopReason.error,
+        errorMessage=error_text,
         timestamp=int(time() * 1000),
     )

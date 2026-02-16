@@ -3,7 +3,7 @@ from __future__ import annotations
 import asyncio
 from typing import Any, Callable, Generic, TypeVar
 
-from pi_ai.types import AssistantMessage, AssistantMessageEvent
+from .types import AssistantMessage, AssistantMessageEvent
 
 T = TypeVar("T")
 R = TypeVar("R")
@@ -50,8 +50,6 @@ class EventStream(Generic[T, R]):
             item = await self._queue.get()
             if item is _SENTINEL:
                 raise StopAsyncIteration
-            if self._done and self._queue.empty():
-                return item  # type: ignore[return-value]
             return item  # type: ignore[return-value]
 
     async def result(self) -> R:

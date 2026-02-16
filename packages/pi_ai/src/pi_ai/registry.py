@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import Any, Callable
 
-from pi_ai.event_stream import AssistantMessageEventStream
-from pi_ai.types import Api, Context, Model, SimpleStreamOptions, StreamOptions
+from .event_stream import AssistantMessageEventStream
+from .types import Api, Context, Model, SimpleStreamOptions, StreamOptions
 
 StreamFunction = Callable[
     [Model, Context, StreamOptions | None],

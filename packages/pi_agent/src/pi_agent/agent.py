@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import asyncio
 from time import time
-from typing import Any, Callable, Literal
+from typing import Any, Callable, Literal, cast
 
 from pi_ai.models import get_model
 from pi_ai.stream import stream_simple
@@ -12,12 +12,16 @@ from pi_ai.types import (
     Message,
     Model,
     TextContent,
+    ThinkingContent,
+    ToolCall,
     AssistantMessage,
 )
-from collections.abc import Callable, Awaitable
-from pi_agent.loop import agent_loop, agent_loop_continue
-from pi_agent.types import (
+from collections.abc import Awaitable
+
+from .loop import agent_loop, agent_loop_continue
+from .types import (
     AgentContext,
+    AgentEndEvent,
     AgentEvent,
     AgentLoopConfig,
     AgentMessage,
@@ -296,6 +300,7 @@ class Agent:
         skip_initial = skip_initial_steering_poll
 
         async def _get_steering() -> list[AgentMessage]:
+            nonlocal skip_initial
             if skip_initial:
                 skip_initial = False
                 return []
@@ -357,25 +362,25 @@ class Agent:
 
                 self._emit(event)
 
-            if partial and partial.role == "assistant" and len(partial.content) > 0:
-                from pi_ai.types import TextContent, ThinkingContent, ToolCall
-
-                only_empty = not any(
-                    (
-                        isinstance(c, ThinkingContent) and c.thinking.strip()
-                        or isinstance(c, TextContent) and c.text.strip()
-                        or isinstance(c, ToolCall) and c.name.strip()
+            if partial and isinstance(partial, AssistantMessage):
+                msg = cast(AssistantMessage, partial)
+                if len(msg.content) > 0:
+                    only_empty = not any(
+                        (
+                            isinstance(c, ThinkingContent) and c.thinking.strip()
+                            or isinstance(c, TextContent) and c.text.strip()
+                            or isinstance(c, ToolCall) and c.name.strip()
+                        )
+                        for c in msg.content
                     )
-                    for c in partial.content
-                )
-                if not only_empty:
-                    self.append_message(partial)
-                else:
-                    if self._cancel_event.is_set():
-                        raise RuntimeError("Request was aborted")
+                    if not only_empty:
+                        self.append_message(msg)
+                    else:
+                        if self._cancel_event.is_set():
+                            raise RuntimeError("Request was aborted")
 
         except Exception as err:
-            from pi_ai.types import AssistantMessage, Usage, UsageCost, StopReason
+            from pi_ai.types import Usage, UsageCost, StopReason
 
             error_message = AssistantMessage(
                 role="assistant",
@@ -386,13 +391,13 @@ class Agent:
                 usage=Usage(
                     input=0,
                     output=0,
-                    cache_read=0,
-                    cache_write=0,
-                    total_tokens=0,
+                    cacheRead=0,
+                    cacheWrite=0,
+                    totalTokens=0,
                     cost=UsageCost(),
                 ),
-                stop_reason=StopReason.aborted if self._cancel_event.is_set() else StopReason.error,
-                error_message=str(err),
+                stopReason=StopReason.aborted if self._cancel_event.is_set() else StopReason.error,
+                errorMessage=str(err),
                 timestamp=int(time() * 1000),
             )
             self.append_message(error_message)

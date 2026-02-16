@@ -1,10 +1,11 @@
+"""OpenAI provider - OpenAI-compatible API."""
 from __future__ import annotations
 
 import asyncio
 import json
 from typing import Any, cast
 
-from pi_ai.types import (
+from ..types import (
     AssistantMessage,
     AssistantMessageEvent,
     Context,
@@ -26,15 +27,15 @@ from pi_ai.types import (
     Usage,
     UsageCost,
 )
-from pi_ai.event_stream import AssistantMessageEventStream
-from pi_ai.env_keys import get_env_api_key
-from pi_ai.models import calculate_cost
-from pi_ai.stream import stream_simple
+from ..event_stream import AssistantMessageEventStream
+from ..env_keys import get_env_api_key
+from ..models import calculate_cost
+from ..stream import stream_simple
 
 try:
     import httpx
 except ImportError:
-    httpx = None
+    httpx = None  # type: ignore[misc,assignment]
 
 
 def normalize_mistral_tool_id(tool_id: str) -> str:
@@ -85,12 +86,12 @@ def stream_openai_completions(
             usage=Usage(
                 input=0,
                 output=0,
-                cache_read=0,
-                cache_write=0,
-                total_tokens=0,
+                cacheRead=0,
+                cacheWrite=0,
+                totalTokens=0,
                 cost=UsageCost(),
             ),
-            stop_reason="stop",
+            stopReason="stop",
             timestamp=0,
         )
 
@@ -106,15 +107,15 @@ def stream_openai_completions(
                 base_url=model.base_url,
                 headers={
                     "Authorization": f"Bearer {api_key}",
-                    **(options.headers if options.headers else {}),
+                    **(options.headers if options and options.headers else {}),
                 },
                 timeout=60.0,
             )
 
             params = _build_params(model, context, options)
 
-            headers = {}
-            if options.headers:
+            headers: dict[str, str] = {}
+            if options and options.headers:
                 headers.update(options.headers)
 
             stream.push(StartEvent(partial=output))
@@ -148,9 +149,9 @@ def stream_openai_completions(
                         output.usage = Usage(
                             input=usage_data.get("prompt_tokens", 0),
                             output=usage_data.get("completion_tokens", 0),
-                            cache_read=usage_data.get("prompt_tokens_details", {}).get("cached_tokens", 0),
-                            cache_write=0,
-                            total_tokens=usage_data.get("total_tokens", 0),
+                            cacheRead=usage_data.get("prompt_tokens_details", {}).get("cached_tokens", 0),
+                            cacheWrite=0,
+                            totalTokens=usage_data.get("total_tokens", 0),
                             cost=calculate_cost(model, output.usage),
                         )
                         calculate_cost(model, output.usage)
@@ -166,7 +167,7 @@ def stream_openai_completions(
                             current_block.text += content
                             stream.push(
                                 TextDeltaEvent(
-                                    content_index=block_index[-1],
+                                    contentIndex=block_index[-1],
                                     delta=content,
                                     partial=output,
                                 )
@@ -183,7 +184,7 @@ def stream_openai_completions(
                             current_block.thinking += reasoning
                             stream.push(
                                 ThinkingDeltaEvent(
-                                    content_index=block_index[-1],
+                                    contentIndex=block_index[-1],
                                     delta=reasoning,
                                     partial=output,
                                 )
@@ -197,13 +198,15 @@ def stream_openai_completions(
                                     id="",
                                     name="",
                                     arguments={},
-                                    thought_signature=None,
+                                    thoughtSignature=None,
                                 )
                                 output.content.append(current_block)
                                 block_index.append(len(output.content) - 1)
 
                             if "index" in tool_delta:
                                 tool_call = current_block
+                            else:
+                                tool_call = current_block  # use current_block as default
                             if "id" in tool_delta:
                                 tool_call.id = normalize_mistral_tool_id(tool_delta["id"])
                             if "function" in tool_delta:
@@ -221,15 +224,15 @@ def stream_openai_completions(
                             if "index" not in tool_delta:
                                 stream.push(
                                     ToolcallEndEvent(
-                                        content_index=block_index[-1],
-                                        tool_call=tool_call,
+                                        contentIndex=block_index[-1],
+                                        toolCall=tool_call,
                                         partial=output,
                                     )
                                 )
                             else:
                                 stream.push(
                                     ToolcallDeltaEvent(
-                                        content_index=block_index[-1],
+                                        contentIndex=block_index[-1],
                                         delta=json.dumps(tool_delta["arguments"]),
                                         partial=output,
                                     )
