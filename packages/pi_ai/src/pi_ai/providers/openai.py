@@ -130,7 +130,7 @@ def stream_openai_completions(
             )
 
             stream_text = ""
-            current_block: TextContent | ThinkingContent | None = None
+            current_block: TextContent | ThinkingContent | ToolCall | None = None
             block_index = [0]
 
             async for line in response.aiter_lines():

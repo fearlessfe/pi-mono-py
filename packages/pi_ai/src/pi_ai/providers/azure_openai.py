@@ -104,7 +104,7 @@ def stream_azure_openai(
 
             stream.push(StartEvent(partial=output))
 
-            current_block: TextContent | ThinkingContent | None = None
+            current_block: TextContent | ThinkingContent | ToolCall | None = None
             block_index = [0]
 
             url = f"{model.base_url}/openai/deployments/{model.id}/chat/completions?api-version={_AZURE_API_VERSION}"

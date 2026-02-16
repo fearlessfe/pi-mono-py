@@ -95,7 +95,7 @@ def stream_mistral(
 
             stream.push(StartEvent(partial=output))
 
-            current_block: TextContent | ThinkingContent | None = None
+            current_block: TextContent | ThinkingContent | ToolCall | None = None
             block_index = [0]
 
             async with httpx.AsyncClient(
