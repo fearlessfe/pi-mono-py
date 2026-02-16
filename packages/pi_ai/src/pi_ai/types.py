@@ -70,6 +70,7 @@ class StreamOptions(BaseModel):
     session_id: str | None = Field(default=None, alias="sessionId")
     headers: dict[str, str] | None = None
     max_retry_delay_ms: int | None = Field(default=None, alias="maxRetryDelayMs")
+    tool_choice: str | None = Field(default=None, alias="toolChoice")
 
 
 class SimpleStreamOptions(StreamOptions):
