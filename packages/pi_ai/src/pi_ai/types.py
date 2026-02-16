@@ -269,7 +269,7 @@ class ToolcallEndEvent(BaseModel):
 class DoneEvent(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
     type: Literal["done"] = "done"
-    reason: Literal["stop", "length", "toolUse"]
+    reason: StopReason
     message: AssistantMessage
 
 
