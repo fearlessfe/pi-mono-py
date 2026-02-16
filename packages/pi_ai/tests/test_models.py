@@ -30,12 +30,12 @@ class TestModelRegistry:
             name="Test Model",
             api="test-api",
             provider="test-provider",
-            base_url="https://api.test.com",
+            baseUrl="https://api.test.com",
             reasoning=False,
             input=["text"],
-            cost=ModelCost(input=1.0, output=2.0, cache_read=0.5, cache_write=0.5),
-            context_window=8000,
-            max_tokens=1000,
+            cost=ModelCost(input=1.0, output=2.0, cacheRead=0.5, cacheWrite=0.5),
+            contextWindow=8000,
+            maxTokens=1000,
         )
 
         register_model(model)
@@ -55,24 +55,24 @@ class TestModelRegistry:
             name="Model 1",
             api="api1",
             provider="provider1",
-            base_url="https://api1.com",
+            baseUrl="https://api1.com",
             reasoning=False,
             input=["text"],
-            cost=ModelCost(input=1, output=1, cache_read=0, cache_write=0),
-            context_window=1000,
-            max_tokens=100,
+            cost=ModelCost(input=1, output=1, cacheRead=0, cacheWrite=0),
+            contextWindow=1000,
+            maxTokens=100,
         )
         model2 = Model(
             id="model2",
             name="Model 2",
             api="api2",
             provider="provider2",
-            base_url="https://api2.com",
+            baseUrl="https://api2.com",
             reasoning=False,
             input=["text"],
-            cost=ModelCost(input=1, output=1, cache_read=0, cache_write=0),
-            context_window=1000,
-            max_tokens=100,
+            cost=ModelCost(input=1, output=1, cacheRead=0, cacheWrite=0),
+            contextWindow=1000,
+            maxTokens=100,
         )
 
         register_model(model1)
@@ -88,12 +88,12 @@ class TestModelRegistry:
             name="Test Model",
             api="test-api",
             provider="test-provider",
-            base_url="https://api.test.com",
+            baseUrl="https://api.test.com",
             reasoning=False,
             input=["text"],
-            cost=ModelCost(input=1, output=1, cache_read=0, cache_write=0),
-            context_window=1000,
-            max_tokens=100,
+            cost=ModelCost(input=1, output=1, cacheRead=0, cacheWrite=0),
+            contextWindow=1000,
+            maxTokens=100,
         )
 
         register_model(model)
@@ -155,20 +155,20 @@ class TestCalculateCost:
             name="Test",
             api="test",
             provider="test",
-            base_url="https://test.com",
+            baseUrl="https://test.com",
             reasoning=False,
             input=["text"],
-            cost=ModelCost(input=2.0, output=6.0, cache_read=0.5, cache_write=1.0),
-            context_window=1000,
-            max_tokens=100,
+            cost=ModelCost(input=2.0, output=6.0, cacheRead=0.5, cacheWrite=1.0),
+            contextWindow=1000,
+            maxTokens=100,
         )
 
         usage = Usage(
             input=500000,
             output=100000,
-            cache_read=200000,
-            cache_write=100000,
-            total_tokens=900000,
+            cacheRead=200000,
+            cacheWrite=100000,
+            totalTokens=900000,
             cost=UsageCost(),
         )
 
@@ -188,24 +188,24 @@ class TestModelsAreEqual:
             name="Model",
             api="api",
             provider="provider",
-            base_url="https://test.com",
+            baseUrl="https://test.com",
             reasoning=False,
             input=["text"],
-            cost=ModelCost(input=1, output=1, cache_read=0, cache_write=0),
-            context_window=1000,
-            max_tokens=100,
+            cost=ModelCost(input=1, output=1, cacheRead=0, cacheWrite=0),
+            contextWindow=1000,
+            maxTokens=100,
         )
         model2 = Model(
             id="model-id",
             name="Model",
             api="api",
             provider="provider",
-            base_url="https://test.com",
+            baseUrl="https://test.com",
             reasoning=False,
             input=["text"],
-            cost=ModelCost(input=1, output=1, cache_read=0, cache_write=0),
-            context_window=1000,
-            max_tokens=100,
+            cost=ModelCost(input=1, output=1, cacheRead=0, cacheWrite=0),
+            contextWindow=1000,
+            maxTokens=100,
         )
 
         assert models_are_equal(model1, model2) is True
@@ -216,24 +216,24 @@ class TestModelsAreEqual:
             name="Model 1",
             api="api",
             provider="provider",
-            base_url="https://test.com",
+            baseUrl="https://test.com",
             reasoning=False,
             input=["text"],
-            cost=ModelCost(input=1, output=1, cache_read=0, cache_write=0),
-            context_window=1000,
-            max_tokens=100,
+            cost=ModelCost(input=1, output=1, cacheRead=0, cacheWrite=0),
+            contextWindow=1000,
+            maxTokens=100,
         )
         model2 = Model(
             id="model-id-2",
             name="Model 2",
             api="api",
             provider="provider",
-            base_url="https://test.com",
+            baseUrl="https://test.com",
             reasoning=False,
             input=["text"],
-            cost=ModelCost(input=1, output=1, cache_read=0, cache_write=0),
-            context_window=1000,
-            max_tokens=100,
+            cost=ModelCost(input=1, output=1, cacheRead=0, cacheWrite=0),
+            contextWindow=1000,
+            maxTokens=100,
         )
 
         assert models_are_equal(model1, model2) is False
@@ -244,12 +244,12 @@ class TestModelsAreEqual:
             name="Model",
             api="api",
             provider="provider",
-            base_url="https://test.com",
+            baseUrl="https://test.com",
             reasoning=False,
             input=["text"],
-            cost=ModelCost(input=1, output=1, cache_read=0, cache_write=0),
-            context_window=1000,
-            max_tokens=100,
+            cost=ModelCost(input=1, output=1, cacheRead=0, cacheWrite=0),
+            contextWindow=1000,
+            maxTokens=100,
         )
 
         assert models_are_equal(None, model) is False

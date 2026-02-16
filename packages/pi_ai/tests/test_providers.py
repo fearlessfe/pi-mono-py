@@ -11,19 +11,19 @@ def test_model():
         name="GPT-4o",
         api="openai-completions",
         provider="openai",
-        base_url="https://api.openai.com/v1",
+        baseUrl="https://api.openai.com/v1",
         reasoning=False,
         input=["text", "image"],
-        cost=ModelCost(input=2.50, output=10.00, cache_read=1.25, cache_write=1.25),
-        context_window=128000,
-        max_tokens=16384,
+        cost=ModelCost(input=2.50, output=10.00, cacheRead=1.25, cacheWrite=1.25),
+        contextWindow=128000,
+        maxTokens=16384,
     )
 
 
 @pytest.fixture
 def test_context():
     return Context(
-        system_prompt="You are a helpful assistant.",
+        systemPrompt="You are a helpful assistant.",
         messages=[
             UserMessage(
                 role="user",
@@ -77,14 +77,14 @@ class TestOpenAIProvider:
                 role="assistant",
                 content=[
                     ToolCall(
-                        type="toolCall", id="1", name="test", arguments={}, thought_signature=None
+                        type="toolCall", id="1", name="test", arguments={}, thoughtSignature=None
                     )
                 ],
                 api="test",
                 provider="test",
                 model="test",
                 usage=Usage(
-                    input=0, output=0, cache_read=0, cache_write=0, total_tokens=0, cost=UsageCost()
+                    input=0, output=0, cacheRead=0, cacheWrite=0, totalTokens=0, cost=UsageCost()
                 ),
                 stopReason="stop",
                 timestamp=0,

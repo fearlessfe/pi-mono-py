@@ -111,7 +111,7 @@ def format_sse(data: dict) -> str:
 
 @pytest.fixture
 def mock_openai_stream():
-    def _mock(respx_mock, base_url="https://api.openai.com/v1"):
+    def _mock(respx_mock, baseUrl="https://api.openai.com/v1"):
         sse_data = (
             format_sse(MockResponses.MOCK_OPENAI_CHAT_COMPLETION)
             + format_sse(MockResponses.MOCK_OPENAI_TEXT_DELTA)
@@ -129,7 +129,7 @@ def mock_openai_stream():
 
 @pytest.fixture
 def mock_anthropic_stream():
-    def _mock(respx_mock, base_url="https://api.anthropic.com"):
+    def _mock(respx_mock, baseUrl="https://api.anthropic.com"):
         sse_data = (
             format_sse(MockResponses.MOCK_ANTHROPIC_MESSAGE_START)
             + format_sse(MockResponses.MOCK_ANTHROPIC_CONTENT_BLOCK_START)
@@ -147,7 +147,7 @@ def mock_anthropic_stream():
 
 @pytest.fixture
 def mock_google_stream():
-    def _mock(respx_mock, base_url="https://generativelanguage.googleapis.com"):
+    def _mock(respx_mock, baseUrl="https://generativelanguage.googleapis.com"):
 
         sse_data = format_sse(MockResponses.MOCK_GOOGLE_RESPONSE)
         respx_mock.post(f"{base_url}/v1beta/models/gemini-2.0-flash:streamGenerateContent").mock(

@@ -77,7 +77,7 @@ def agent_loop(
     async def _run():
         new_messages = list(prompts)
         current_context = AgentContext(
-            system_prompt=context.system_prompt,
+            systemPrompt=context.system_prompt,
             messages=[*context.messages, *prompts],
             tools=context.tools,
         )
@@ -111,7 +111,7 @@ def agent_loop_continue(
     async def _run():
         new_messages: list[AgentMessage] = []
         current_context = AgentContext(
-            system_prompt=context.system_prompt,
+            systemPrompt=context.system_prompt,
             messages=list(context.messages),
             tools=context.tools,
         )
@@ -232,7 +232,7 @@ async def _stream_assistant_response(
         llm_messages = llm_messages_raw
 
     llm_context = AiContext(
-        system_prompt=context.system_prompt,
+        systemPrompt=context.system_prompt,
         messages=llm_messages,
         tools=context.tools,
     )
@@ -392,8 +392,8 @@ async def _execute_tool_calls(
 
         stream.push(
             ToolExecutionStartEvent(
-                tool_call_id=tool_call.id,
-                tool_name=tool_call.name,
+                toolCallId=tool_call.id,
+                toolName=tool_call.name,
                 args=tool_call.arguments,
             )
         )
@@ -408,10 +408,10 @@ async def _execute_tool_calls(
             async def on_update(partial_result: AgentToolResult) -> None:
                 stream.push(
                     ToolExecutionUpdateEvent(
-                        tool_call_id=tool_call.id,
-                        tool_name=tool_call.name,
+                        toolCallId=tool_call.id,
+                        toolName=tool_call.name,
                         args=tool_call.arguments,
-                        partial_result=partial_result,
+                        partialResult=partial_result,
                     )
                 )
 
@@ -454,20 +454,20 @@ async def _execute_tool_calls(
 
         stream.push(
             ToolExecutionEndEvent(
-                tool_call_id=tool_call.id,
-                tool_name=tool_call.name,
+                toolCallId=tool_call.id,
+                toolName=tool_call.name,
                 result=result.model_dump() if result else {},  # type: ignore[arg-type]
-                is_error=is_error,
+                isError=is_error,
             )
         )
 
         tool_result_message = ToolResultMessage(
             role="toolResult",
-            tool_call_id=tool_call.id,
-            tool_name=tool_call.name,
+            toolCallId=tool_call.id,
+            toolName=tool_call.name,
             content=result.content if result else [],
             details=result.details if result else None,
-            is_error=is_error,
+            isError=is_error,
             timestamp=int(time() * 1000),
         )
         results.append(tool_result_message)
@@ -498,27 +498,27 @@ def _skip_tool_call(
 
     stream.push(
         ToolExecutionStartEvent(
-            tool_call_id=tool_call.id,
-            tool_name=tool_call.name,
+            toolCallId=tool_call.id,
+            toolName=tool_call.name,
             args=tool_call.arguments,
         )
     )
     stream.push(
         ToolExecutionEndEvent(
-            tool_call_id=tool_call.id,
-            tool_name=tool_call.name,
+            toolCallId=tool_call.id,
+            toolName=tool_call.name,
             result=result.model_dump(),
-            is_error=True,
+            isError=True,
         )
     )
 
     tool_result_message = ToolResultMessage(
         role="toolResult",
-        tool_call_id=tool_call.id,
-        tool_name=tool_call.name,
+        toolCallId=tool_call.id,
+        toolName=tool_call.name,
         content=result.content,
         details={},
-        is_error=True,
+        isError=True,
         timestamp=int(time() * 1000),
     )
 

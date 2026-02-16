@@ -22,21 +22,21 @@ def test_model_cost_calculation():
         name="Test Model",
         api="openai-completions",
         provider="openai",
-        base_url="https://api.openai.com",
+        baseUrl="https://api.openai.com",
         reasoning=False,
         input=["text"],
-        cost=ModelCost(input=0.5, output=1.5, cache_read=0.1, cache_write=0.05),
-        context_window=128000,
-        max_tokens=4096,
+        cost=ModelCost(input=0.5, output=1.5, cacheRead=0.1, cacheWrite=0.05),
+        contextWindow=128000,
+        maxTokens=4096,
     )
 
     usage = Usage(
         input=1000,
         output=500,
-        cache_read=200,
-        cache_write=50,
-        total_tokens=1500,
-        cost=UsageCost(input=0, output=0, cache_read=0, cache_write=0, total=0),
+        cacheRead=200,
+        cacheWrite=50,
+        totalTokens=1500,
+        cost=UsageCost(input=0, output=0, cacheRead=0, cacheWrite=0, total=0),
     )
 
     cost = calculate_cost(model, usage)
@@ -118,7 +118,7 @@ def test_message_serialization():
                 id="call_123",
                 name="get_weather",
                 arguments={"location": "Tokyo"},
-                thought_signature=None,
+                thoughtSignature=None,
             ),
         ],
         api="anthropic",
@@ -133,7 +133,7 @@ def test_message_serialization():
             "cost": {"input": 0, "output": 0, "cache_read": 0, "cache_write": 0, "total": 0},
         },
         timestamp=1234567891,
-        stop_reason="toolUse",
+        stopReason="toolUse",
     )
     assistant_json = assistant_msg.model_dump()
     assert assistant_json["role"] == "assistant"
@@ -214,7 +214,7 @@ def test_content_type_validation():
     thinking = ThinkingContent(
         type="thinking",
         thinking="Let me think about this...",
-        thinking_signature="sig123",
+        thinkingSignature="sig123",
     )
     assert thinking.type == "thinking"
     assert thinking.thinking == "Let me think about this..."
@@ -224,7 +224,7 @@ def test_content_type_validation():
         id="call_abc123",
         name="get_weather",
         arguments={"location": "Tokyo"},
-        thought_signature=None,
+        thoughtSignature=None,
     )
     assert tool_call.type == "toolCall"
     assert tool_call.id == "call_abc123"
@@ -256,9 +256,9 @@ def test_union_type_discrimination():
         id="call_1",
         name="test",
         arguments={},
-        thought_signature=None,
+        thoughtSignature=None,
     )
-    thinking = ThinkingContent(type="thinking", thinking="hmm", thinking_signature=None)
+    thinking = ThinkingContent(type="thinking", thinking="hmm", thinkingSignature=None)
 
     assistant_contents: list[AssistantContent] = [text, thinking, tool_call]
     assert len(assistant_contents) == 3

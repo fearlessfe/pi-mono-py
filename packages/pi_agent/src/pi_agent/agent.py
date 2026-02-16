@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+from collections.abc import Callable, Awaitable
 from time import time
 from typing import Any, Literal, cast
 
@@ -11,7 +12,9 @@ from pi_ai.types import (
     ImageContent,
     Message,
     Model,
+    StopReason,
     TextContent,
+    ThinkingContent,
     ToolCall,
 )
 
@@ -44,7 +47,7 @@ class Agent:
         opts = options or {}
         self._state = AgentState(
             model=get_model("google", "gemini-2.5-flash-lite-preview-06-17") or opts.get("model"),
-            thinking_level=opts.get("thinking_level", "off"),
+            thinkingLevel=opts.get("thinking_level", "off"),
             messages=[],
         )
         self._convert_to_llm = opts.get("convert_to_llm", _default_convert_to_llm)
@@ -273,7 +276,7 @@ class Agent:
             reasoning = self._state.thinking_level
 
         context = AgentContext(
-            system_prompt=self._state.system_prompt,
+            systemPrompt=self._state.system_prompt,
             messages=list(self._state.messages),
             tools=self._state.tools,
         )
@@ -283,12 +286,12 @@ class Agent:
         config = AgentLoopConfig(
             model=model,
             reasoning=reasoning,
-            session_id=self._session_id,
-            thinking_budgets=AiThinkingBudgets(**(self._thinking_budgets or {})),
-            max_retry_delay_ms=self._max_retry_delay_ms,
-            convert_to_llm=self._convert_to_llm,
-            transform_context=self._transform_context,
-            get_api_key=self._get_api_key,
+            sessionId=self._session_id,
+            thinkingBudgets=AiThinkingBudgets(**(self._thinking_budgets or {})),
+            maxRetryDelayMs=self._max_retry_delay_ms,
+            convertToLlm=self._convert_to_llm,
+            transformContext=self._transform_context,
+            getApiKey=self._get_api_key,
         )
 
         skip_initial = skip_initial_steering_poll

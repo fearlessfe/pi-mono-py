@@ -20,12 +20,12 @@ def create_mock_model():
         name="Test Model",
         api="openai-completions",
         provider="openai",
-        base_url="https://api.test.com",
+        baseUrl="https://api.test.com",
         reasoning=False,
         input=["text"],
         cost=ModelCost(),
-        context_window=128000,
-        max_tokens=4096,
+        contextWindow=128000,
+        maxTokens=4096,
     )
 
 
@@ -38,7 +38,7 @@ class TestAgentLoopConfig:
 
         config = AgentLoopConfig(
             model=model,
-            convert_to_llm=lambda msgs: [],
+            convertToLlm=lambda msgs: [],
         )
 
         assert config.max_retries == 3
@@ -56,12 +56,12 @@ class TestAgentLoopConfig:
 
         config = AgentLoopConfig(
             model=model,
-            convert_to_llm=lambda msgs: [],
-            max_retries=5,
-            retry_delay_ms=2000,
-            tool_timeout_ms=30000,
-            llm_timeout_ms=60000,
-            get_steering_messages=get_steering,
+            convertToLlm=lambda msgs: [],
+            maxRetries=5,
+            retryDelayMs=2000,
+            toolTimeoutMs=30000,
+            llmTimeoutMs=60000,
+            getSteeringMessages=get_steering,
         )
 
         assert config.max_retries == 5
@@ -86,19 +86,19 @@ class TestAgentLoopContinueValidation:
             provider=model.provider,
             model=model.id,
             usage=Usage(),
-            stop_reason="stop",
+            stopReason="stop",
             timestamp=int(time() * 1000),
         )
 
         context = AgentContext(
-            system_prompt="",
+            systemPrompt="",
             messages=[assistant_message],
             tools=[],
         )
 
         config = AgentLoopConfig(
             model=model,
-            convert_to_llm=lambda msgs: [],
+            convertToLlm=lambda msgs: [],
         )
 
         with pytest.raises(ValueError, match="Cannot continue from message role: assistant"):
@@ -110,14 +110,14 @@ class TestAgentLoopContinueValidation:
         model = create_mock_model()
 
         context = AgentContext(
-            system_prompt="",
+            systemPrompt="",
             messages=[],
             tools=[],
         )
 
         config = AgentLoopConfig(
             model=model,
-            convert_to_llm=lambda msgs: [],
+            convertToLlm=lambda msgs: [],
         )
 
         with pytest.raises(ValueError, match="Cannot continue: no messages"):

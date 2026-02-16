@@ -106,7 +106,7 @@ def stream_openai_completions(
                 )
 
             client = httpx.AsyncClient(
-                base_url=model.base_url,
+                baseUrl=model.base_url,
                 headers={
                     "Authorization": f"Bearer {api_key}",
                     **(options.headers if options and options.headers else {}),

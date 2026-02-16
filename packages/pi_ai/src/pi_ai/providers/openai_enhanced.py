@@ -218,7 +218,7 @@ async def stream_openai_completions(
                     if reasoning:
                         if not current_block or current_block.type != "thinking":
                             current_block = ThinkingContent(
-                                type="thinking", thinking="", thinking_signature=None
+                                type="thinking", thinking="", thinkingSignature=None
                             )
                             output.content.append(current_block)
                             block_index.append(len(output.content) - 1)
@@ -352,7 +352,7 @@ async def stream_openai_responses(
                 )
 
             client = httpx.AsyncClient(
-                base_url=model.base_url,
+                baseUrl=model.base_url,
                 headers={
                     "Authorization": f"Bearer {api_key}",
                     **(options.headers if options and options.headers else {}),
@@ -382,7 +382,7 @@ async def stream_openai_responses(
                         if reasoning:
                             if not current_block or current_block.type != "thinking":
                                 current_block = ThinkingContent(
-                                    type="thinking", thinking="", thinking_signature=None
+                                    type="thinking", thinking="", thinkingSignature=None
                                 )
                                 output.content.append(current_block)
                                 block_index.append(len(output.content) - 1)

@@ -9,18 +9,18 @@ def test_agent_state_default():
         name="Test Model",
         api="openai-completions",
         provider="openai",
-        base_url="https://api.openai.com",
+        baseUrl="https://api.openai.com",
         reasoning=False,
         input=["text"],
         cost=ModelCost(),
-        context_window=128000,
-        max_tokens=4096,
+        contextWindow=128000,
+        maxTokens=4096,
     )
 
     state = AgentState(
-        system_prompt="You are helpful.",
+        systemPrompt="You are helpful.",
         model=model,
-        thinking_level="off",
+        thinkingLevel="off",
         tools=[],
         messages=[],
     )

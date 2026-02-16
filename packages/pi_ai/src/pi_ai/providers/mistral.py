@@ -99,7 +99,7 @@ def stream_mistral(
             block_index = [0]
 
             async with httpx.AsyncClient(
-                base_url=model.base_url,
+                baseUrl=model.base_url,
                 headers=headers,
                 timeout=120.0,
             ) as client, client.stream("POST", "/chat/completions", json=params) as response:

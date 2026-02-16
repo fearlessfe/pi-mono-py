@@ -129,14 +129,14 @@ def stream_anthropic_messages(
                     "anthropic is required for Anthropic provider. Install with: pip install anthropic"
                 )
 
-            client = Anthropic(api_key=api_key, base_url=model.base_url)  # type: ignore[misc]
+            client = Anthropic(api_key=api_key, baseUrl=model.base_url)  # type: ignore[misc]
 
             opts = (
                 AnthropicOptions()
                 if options is None
                 else AnthropicOptions(
                     thinking_enabled=options.reasoning is not None,
-                    thinking_level=options.reasoning if options.reasoning else None,
+                    thinkingLevel=options.reasoning if options.reasoning else None,
                 )
             )
 

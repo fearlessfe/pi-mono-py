@@ -391,7 +391,7 @@ async def http_client_stream(
     url = f"{model.base_url}/v1beta/models/{model.id}:streamGenerateContent"
 
     async with httpx.AsyncClient(
-        base_url=model.base_url,
+        baseUrl=model.base_url,
         headers={
             "Content-Type": "application/json",
             "x-goog-api-key": headers.get("Authorization", "").replace("Bearer ", ""),
