@@ -235,7 +235,7 @@ def stream_proxy(
                                 stream.push(
                                     ToolcallEndEvent(
                                         contentIndex=block_index[-1],
-                                        toolCall=current_block,
+                                        toolCall=cast(ToolCall, current_block),
                                         partial=output,
                                     )
                                 )
