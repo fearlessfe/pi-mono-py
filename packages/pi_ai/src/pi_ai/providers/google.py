@@ -198,7 +198,7 @@ def stream_google(
                                 current_block = ThinkingContent(
                                     type="thinking",
                                     thinking="",
-                                    thinking_signature=None,
+                                    thinkingSignature=None,
                                 )
                                 output.content.append(current_block)
                                 block_index.append(len(output.content) - 1)

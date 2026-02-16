@@ -180,7 +180,7 @@ def stream_anthropic_messages(
                             )
                         elif block.type == "thinking":
                             current_block = ThinkingContent(
-                                type="thinking", thinking="", thinking_signature=None
+                                type="thinking", thinking="", thinkingSignature=None
                             )
                             output.content.append(current_block)
                             block_index.append(len(output.content) - 1)

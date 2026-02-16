@@ -161,7 +161,7 @@ def stream_xai(
                         if reasoning:
                             if not current_block or current_block.type != "thinking":
                                 current_block = ThinkingContent(
-                                    type="thinking", thinking="", thinking_signature=None
+                                    type="thinking", thinking="", thinkingSignature=None
                                 )
                                 output.content.append(current_block)
                                 block_index.append(len(output.content) - 1)
