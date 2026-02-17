@@ -17,7 +17,7 @@ pi-coding = { workspace = true }
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
-testpaths = ["packages/pi_ai/tests", "packages/pi_agent/tests"]
+testpaths = ["packages/pi_ai/tests", "packages/pi_agent/tests", "packages/pi_tui/tests"]
 addopts = "--cov=pi_ai --cov=pi_agent --cov-report=term-missing --cov-report=html"
 
 [tool.coverage.run]
