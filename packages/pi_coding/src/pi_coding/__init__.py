@@ -5,6 +5,15 @@ from typing import Any
 
 from pi_agent import Agent
 
+from pi_coding.config import (
+    ENV_AGENT_DIR,
+    VERSION,
+    get_agent_dir,
+    get_bin_dir,
+    get_sessions_dir,
+    get_settings_path,
+)
+from pi_coding.core.defaults import DEFAULT_THINKING_LEVEL
 from pi_coding.tools import (
     all_tools,
     bash_tool,
@@ -104,6 +113,15 @@ __all__ = [
     "compute_edit_diff",
     "EditDiffResult",
     "EditDiffError",
+    # Configuration
+    "VERSION",
+    "ENV_AGENT_DIR",
+    "get_agent_dir",
+    "get_bin_dir",
+    "get_sessions_dir",
+    "get_settings_path",
+    # Defaults
+    "DEFAULT_THINKING_LEVEL",
 ]
 
 

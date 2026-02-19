@@ -13,6 +13,12 @@ from pi_coding.utils.edit_diff import (
     restore_line_endings,
     strip_bom,
 )
+from pi_coding.utils.git import (
+    GitSource,
+    get_current_branch,
+    get_repo_status,
+    parse_git_url,
+)
 from pi_coding.utils.path_utils import (
     UNICODE_SPACES,
     expand_path,
@@ -24,6 +30,12 @@ from pi_coding.utils.path_utils import (
     try_curly_quote_variant,
     try_macos_screenshot_path,
     try_nfd_variant,
+)
+from pi_coding.utils.shell import (
+    get_shell_config,
+    get_shell_env,
+    kill_process_tree,
+    sanitize_binary_output,
 )
 from pi_coding.utils.truncate import (
     DEFAULT_MAX_BYTES,
@@ -49,6 +61,10 @@ __all__ = [
     "normalize_to_lf",
     "restore_line_endings",
     "strip_bom",
+    "GitSource",
+    "get_current_branch",
+    "get_repo_status",
+    "parse_git_url",
     "UNICODE_SPACES",
     "expand_path",
     "file_exists",
@@ -59,6 +75,10 @@ __all__ = [
     "try_curly_quote_variant",
     "try_macos_screenshot_path",
     "try_nfd_variant",
+    "get_shell_config",
+    "get_shell_env",
+    "kill_process_tree",
+    "sanitize_binary_output",
     "DEFAULT_MAX_BYTES",
     "DEFAULT_MAX_LINES",
     "GREP_MAX_LINE_LENGTH",
