@@ -67,3 +67,6 @@ uv.lock
 *.db
 *.sqlite
 *.sqlite3
+
+# TypeScript reference files
+packages/pi_coding/_ts_reference/
