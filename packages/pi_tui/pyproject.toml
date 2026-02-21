@@ -2,7 +2,7 @@
 # Part of pi-mono-py - Python port of pi-mono
 
 [project]
-name = "pi-tui"
+name = "pi-mono-tui"
 version = "0.1.0"
 description = "Terminal UI library with differential rendering - Python port of @mariozechner/pi-tui"
 requires-python = ">=3.11"

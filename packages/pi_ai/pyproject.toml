@@ -1,5 +1,5 @@
 [project]
-name = "pi-ai"
+name = "pi-mono-ai"
 version = "0.1.0"
 description = "Unified multi-provider LLM API with streaming, tool calling, and cross-provider handoffs"
 requires-python = ">=3.11"

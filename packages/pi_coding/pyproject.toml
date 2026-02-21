@@ -2,7 +2,7 @@
 # Part of pi-mono-py - Coding Agent Package
 
 [project]
-name = "pi-coding"
+name = "pi-mono-coding"
 version = "0.1.0"
 description = "Coding Agent with file system tools for pi-mono-py"
 readme = "README.md"
@@ -23,8 +23,8 @@ classifiers = [
 ]
 
 dependencies = [
-    "pi-agent>=0.1.0",
-    "pi-ai>=0.1.0",
+    "pi-mono-agent>=0.1.0",
+    "pi-mono-ai>=0.1.0",
 ]
 
 [build-system]

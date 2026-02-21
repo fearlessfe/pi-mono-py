@@ -10,10 +10,10 @@ license = { text = "MIT" }
 members = ["packages/*"]
 
 [tool.uv.sources]
-pi-ai = { workspace = true }
-pi-agent = { workspace = true }
-pi-tui = { workspace = true }
-pi-coding = { workspace = true }
+pi-mono-ai = { workspace = true }
+pi-mono-agent = { workspace = true }
+pi-mono-tui = { workspace = true }
+pi-mono-coding = { workspace = true }
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"

@@ -1,11 +1,11 @@
 [project]
-name = "pi-agent"
+name = "pi-mono-agent"
 version = "0.1.0"
 description = "Agent runtime with event-driven architecture, tool execution, and state management"
 requires-python = ">=3.11"
 license = { text = "MIT" }
 dependencies = [
-    "pi-ai",
+    "pi-mono-ai",
     "jsonschema>=4.0.0",
 ]
 

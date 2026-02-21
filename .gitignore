@@ -42,6 +42,8 @@ htmlcov/
 
 # uv
 uv.lock
+.opencode
+_bmad*
 
 # Type checking
 .pyright/
